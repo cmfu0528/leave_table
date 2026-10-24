@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同仁請假行事曆 (精簡版)</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --tw-bg: #eff6ff;
+      --tw-border: #3b82f6;
+      --tw-text: #1e40af;
+      --abroad-bg: #fff7ed;
+      --abroad-border: #f97316;
+      --abroad-text: #9a3412;
+      --weekend: #dc2626;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 18px 24px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 2px;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .controls-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .control-item label.ctrl-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    select, input[type="date"] {
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      background-color: #fff;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    select:focus, input[type="date"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+    }
+
+    /* Multi-select Member Dropdown */
+    .multiselect {
+      position: relative;
+      min-width: 210px;
+    }
+
+    .multiselect-btn {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .multiselect-btn:hover {
+      border-color: #94a3b8;
+    }
+
+    .multiselect-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 280px;
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+      z-index: 150;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .multiselect-menu.open {
+      display: flex;
+    }
+
+    .ms-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+
+    .ms-link {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .ms-link:hover {
+      text-decoration: underline;
+    }
+
+    .ms-search {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .ms-list {
+      max-height: 240px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ms-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ms-option:hover {
+      background: #f1f5f9;
+    }
+
+    .ms-option input {
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .current-period-banner {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    .loc-tw {
+      background: var(--tw-bg);
+      color: var(--tw-text);
+      border-left: 3px solid var(--tw-border);
+    }
+
+    .loc-abroad {
+      background: var(--abroad-bg);
+      color: var(--abroad-text);
+      border-left: 3px solid var(--abroad-border);
+    }
+
+    /* Calendar Grid */
+    .calendar-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .weekday-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .weekday-cell {
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .weekday-cell.weekend {
+      color: var(--weekend);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      background: var(--border);
+      gap: 1px;
+    }
+
+    .day-cell {
+      background: var(--surface);
+      min-height: 135px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .day-cell:hover {
+      background: #f8fafc;
+    }
+
+    .day-cell.other-month {
+      background: #f8fafc;
+      opacity: 0.55;
+    }
+
+    .day-cell.today {
+      background: #eff6ff;
+    }
+
+    .day-cell.selected-day {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+      z-index: 2;
+    }
+
+    .day-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .day-number {
+      font-size: 0.92rem;
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .day-cell.weekend .day-number {
+      color: var(--weekend);
+    }
+
+    .day-cell.today .day-number {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .day-count-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 1px 8px;
+      border-radius: 999px;
+    }
+
+    .day-records {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      max-height: 210px;
+    }
+
+    .leave-item {
+      border-radius: 5px;
+      padding: 4px 7px;
+      font-size: 0.76rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .leave-item-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .leave-item-loc {
+      font-size: 0.68rem;
+      padding: 0 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.7);
+      font-weight: 700;
+    }
+
+    .leave-item-time {
+      font-size: 0.7rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    /* Detail Section */
+    .detail-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .detail-section-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    .records-table th,
+    .records-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .records-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .records-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .name-pill {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .loc-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .loc-badge.tw {
+      background: var(--tw-bg);
+      color: var(--tw-text);
+      border: 1px solid #bfdbfe;
+    }
+
+    .loc-badge.abroad {
+      background: var(--abroad-bg);
+      color: var(--abroad-text);
+      border: 1px solid #fed7aa;
+    }
+
+    .empty-msg {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .weekday-header {
+        display: none;
+      }
+      .calendar-grid {
+        grid-template-columns: 1fr;
+      }
+      .day-cell.other-month {
+        display: none;
+      }
+      .day-cell {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>新竹臺大分院 小兒部 — 同仁請假行事曆</h1>
+        <p id="subtitleText">資料期間：2025-12-31 ～ 2026-12-31 ｜ 共 659 筆紀錄 ｜ 來源：leave_table.xls ｜ 產出時間：2026-10-24 21:00</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="toolbar">
+      <div class="controls-group">
+        <!-- 下拉選單 1: 點選月份 -->
+        <div class="control-item">
+          <label class="ctrl-label" for="monthSelect">📅 月份：</label>
+          <select id="monthSelect"></select>
+        </div>
+
+        <!-- 下拉選單 2: 顯示當日、當周、整月 -->
+        <div class="control-item">
+          <label class="ctrl-label" for="modeSelect">👁️ 顯示：</label>
+          <select id="modeSelect">
+            <option value="month">整月月曆</option>
+            <option value="week">當周</option>
+            <option value="day">當日</option>
+          </select>
+        </div>
+
+        <!-- 下拉選單 3: 複選同仁 (全部同仁 / 某幾位同仁) -->
+        <div class="control-item">
+          <label class="ctrl-label">👤 同仁：</label>
+          <div class="multiselect" id="memberMultiselect">
+            <button type="button" class="multiselect-btn" id="msToggleBtn">
+              <span id="msBtnLabel">全部同仁</span>
+              <span style="font-size:0.75rem;color:var(--text-muted);">▼</span>
+            </button>
+            <div class="multiselect-menu" id="msMenu">
+              <div class="ms-actions">
+                <span>選擇同仁 (可複選)</span>
+                <div>
+                  <button type="button" class="ms-link" id="msSelectAll">全部同仁</button>
+                  <span style="color:var(--border-strong);">|</span>
+                  <button type="button" class="ms-link" id="msClearAll">清除全選</button>
+                </div>
+              </div>
+              <input type="text" class="ms-search" id="msSearchInput" placeholder="搜尋同仁姓名...">
+              <div class="ms-list" id="msOptionsList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 指定基準日 -->
+        <div class="control-item">
+          <label class="ctrl-label" for="focusDateInput">📌 日期：</label>
+          <input type="date" id="focusDateInput">
+          <button type="button" class="btn" id="btnToday">今天</button>
+        </div>
+      </div>
+
+      <div class="controls-group">
+        <button type="button" class="btn" id="btnPrev">◀ 上一個</button>
+        <div class="current-period-banner" id="currentPeriodLabel"></div>
+        <button type="button" class="btn" id="btnNext">下一個 ▶</button>
+      </div>
+    </div>
+
+    <div class="legend-bar">
+      <span>地點分類圖例：</span>
+      <span class="legend-chip loc-tw">🏠 台灣</span>
+      <span class="legend-chip loc-abroad">✈️ 國外</span>
+      <span style="margin-left:auto;">💡 點擊月曆上任一日期可查看該日請假同仁清單</span>
+    </div>
+
+    <!-- 月曆 / 當周行事曆 -->
+    <div class="calendar-box" id="calendarBox">
+      <div class="weekday-header">
+        <div class="weekday-cell weekend">週日 (Sun)</div>
+        <div class="weekday-cell">週一 (Mon)</div>
+        <div class="weekday-cell">週二 (Tue)</div>
+        <div class="weekday-cell">週三 (Wed)</div>
+        <div class="weekday-cell">週四 (Thu)</div>
+        <div class="weekday-cell">週五 (Fri)</div>
+        <div class="weekday-cell weekend">週六 (Sat)</div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <!-- 明細表 (姓名、起訖時間、地點) -->
+    <div class="detail-section" id="detailSection">
+      <div class="detail-section-title">
+        <span id="detailTitle">請假同仁資料</span>
+        <span style="font-size:0.85rem;color:var(--text-muted);font-weight:600;" id="detailCount"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th style="width:25%;">姓名</th>
+              <th style="width:50%;">起訖時間</th>
+              <th style="width:25%;">地點</th>
+            </tr>
+          </thead>
+          <tbody id="detailTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LEAVE_RECORDS = [{"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2025-12-14 08:00 ~ 2026-02-12 17:00", "startDate": "2025-12-14", "startTime": "08:00", "endDate": "2026-02-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2025-12-29 08:00 ~ 2025-12-31 17:00", "startDate": "2025-12-29", "startTime": "08:00", "endDate": "2025-12-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2025-12-31 08:00 ~ 2025-12-31 17:00", "startDate": "2025-12-31", "startTime": "08:00", "endDate": "2025-12-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2025-12-31 08:00 ~ 2025-12-31 17:00", "startDate": "2025-12-31", "startTime": "08:00", "endDate": "2025-12-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2025-12-31 08:00 ~ 2025-12-31 17:00", "startDate": "2025-12-31", "startTime": "08:00", "endDate": "2025-12-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-01-02 08:00 ~ 2026-01-05 17:00", "startDate": "2026-01-02", "startTime": "08:00", "endDate": "2026-01-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-02 08:00 ~ 2026-01-05 17:00", "startDate": "2026-01-02", "startTime": "08:00", "endDate": "2026-01-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-01-05 12:00 ~ 2026-01-05 17:00", "startDate": "2026-01-05", "startTime": "12:00", "endDate": "2026-01-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-05 15:00 ~ 2026-01-05 17:00", "startDate": "2026-01-05", "startTime": "15:00", "endDate": "2026-01-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-01-06 15:00 ~ 2026-01-06 17:00", "startDate": "2026-01-06", "startTime": "15:00", "endDate": "2026-01-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-07 08:00 ~ 2026-01-07 12:00", "startDate": "2026-01-07", "startTime": "08:00", "endDate": "2026-01-07", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-07 08:00 ~ 2026-01-07 09:00", "startDate": "2026-01-07", "startTime": "08:00", "endDate": "2026-01-07", "endTime": "09:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-07 14:00 ~ 2026-01-07 17:00", "startDate": "2026-01-07", "startTime": "14:00", "endDate": "2026-01-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-07 16:00 ~ 2026-01-07 17:00", "startDate": "2026-01-07", "startTime": "16:00", "endDate": "2026-01-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-08 08:00 ~ 2026-01-08 12:00", "startDate": "2026-01-08", "startTime": "08:00", "endDate": "2026-01-08", "endTime": "12:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-01-09 08:00 ~ 2026-01-09 13:00", "startDate": "2026-01-09", "startTime": "08:00", "endDate": "2026-01-09", "endTime": "13:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-09 15:00 ~ 2026-01-09 17:00", "startDate": "2026-01-09", "startTime": "15:00", "endDate": "2026-01-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-12 15:00 ~ 2026-01-12 17:00", "startDate": "2026-01-12", "startTime": "15:00", "endDate": "2026-01-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-14 08:00 ~ 2026-01-14 17:00", "startDate": "2026-01-14", "startTime": "08:00", "endDate": "2026-01-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-01-14 08:00 ~ 2026-01-14 17:00", "startDate": "2026-01-14", "startTime": "08:00", "endDate": "2026-01-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-14 08:00 ~ 2026-01-14 12:00", "startDate": "2026-01-14", "startTime": "08:00", "endDate": "2026-01-14", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-01-14 08:00 ~ 2026-01-21 17:00", "startDate": "2026-01-14", "startTime": "08:00", "endDate": "2026-01-21", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-14 13:00 ~ 2026-01-14 17:00", "startDate": "2026-01-14", "startTime": "13:00", "endDate": "2026-01-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-01-15 08:00 ~ 2026-01-15 17:00", "startDate": "2026-01-15", "startTime": "08:00", "endDate": "2026-01-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-01-16 08:00 ~ 2026-01-17 17:00", "startDate": "2026-01-16", "startTime": "08:00", "endDate": "2026-01-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-16 16:00 ~ 2026-01-16 17:00", "startDate": "2026-01-16", "startTime": "16:00", "endDate": "2026-01-16", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-19 08:00 ~ 2026-01-19 10:00", "startDate": "2026-01-19", "startTime": "08:00", "endDate": "2026-01-19", "endTime": "10:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-01-19 08:00 ~ 2026-01-19 17:00", "startDate": "2026-01-19", "startTime": "08:00", "endDate": "2026-01-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-19 15:00 ~ 2026-01-19 17:00", "startDate": "2026-01-19", "startTime": "15:00", "endDate": "2026-01-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-20 16:00 ~ 2026-01-20 17:00", "startDate": "2026-01-20", "startTime": "16:00", "endDate": "2026-01-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-01-21 08:00 ~ 2026-01-26 17:00", "startDate": "2026-01-21", "startTime": "08:00", "endDate": "2026-01-26", "endTime": "17:00", "location": "國外"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-21 08:00 ~ 2026-01-21 12:00", "startDate": "2026-01-21", "startTime": "08:00", "endDate": "2026-01-21", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-01-22 08:00 ~ 2026-01-22 17:00", "startDate": "2026-01-22", "startTime": "08:00", "endDate": "2026-01-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-01-22 13:00 ~ 2026-01-22 17:00", "startDate": "2026-01-22", "startTime": "13:00", "endDate": "2026-01-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-22 14:00 ~ 2026-01-22 17:00", "startDate": "2026-01-22", "startTime": "14:00", "endDate": "2026-01-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-01-23 08:00 ~ 2026-01-23 17:00", "startDate": "2026-01-23", "startTime": "08:00", "endDate": "2026-01-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-01-23 08:00 ~ 2026-01-23 17:00", "startDate": "2026-01-23", "startTime": "08:00", "endDate": "2026-01-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-23 08:00 ~ 2026-01-23 17:00", "startDate": "2026-01-23", "startTime": "08:00", "endDate": "2026-01-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-01-23 12:00 ~ 2026-01-23 17:00", "startDate": "2026-01-23", "startTime": "12:00", "endDate": "2026-01-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-01-23 12:00 ~ 2026-01-23 17:00", "startDate": "2026-01-23", "startTime": "12:00", "endDate": "2026-01-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-01-23 17:00 ~ 2026-02-04 16:00", "startDate": "2026-01-23", "startTime": "17:00", "endDate": "2026-02-04", "endTime": "16:00", "location": "國外"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-01-23 17:00 ~ 2026-01-31 17:00", "startDate": "2026-01-23", "startTime": "17:00", "endDate": "2026-01-31", "endTime": "17:00", "location": "國外"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-01-24 08:00 ~ 2026-01-27 17:00", "startDate": "2026-01-24", "startTime": "08:00", "endDate": "2026-01-27", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-26 08:00 ~ 2026-01-26 11:00", "startDate": "2026-01-26", "startTime": "08:00", "endDate": "2026-01-26", "endTime": "11:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-01-26 11:00 ~ 2026-01-26 17:00", "startDate": "2026-01-26", "startTime": "11:00", "endDate": "2026-01-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-26 14:00 ~ 2026-01-26 17:00", "startDate": "2026-01-26", "startTime": "14:00", "endDate": "2026-01-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-01-26 15:00 ~ 2026-01-26 17:00", "startDate": "2026-01-26", "startTime": "15:00", "endDate": "2026-01-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-01-27 08:00 ~ 2026-02-01 17:00", "startDate": "2026-01-27", "startTime": "08:00", "endDate": "2026-02-01", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-27 08:00 ~ 2026-01-27 11:00", "startDate": "2026-01-27", "startTime": "08:00", "endDate": "2026-01-27", "endTime": "11:00", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-01-27 17:00 ~ 2026-01-29 17:00", "startDate": "2026-01-27", "startTime": "17:00", "endDate": "2026-01-29", "endTime": "17:00", "location": "國外"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-28 08:00 ~ 2026-01-28 12:00", "startDate": "2026-01-28", "startTime": "08:00", "endDate": "2026-01-28", "endTime": "12:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-01-29 08:00 ~ 2026-02-28 17:00", "startDate": "2026-01-29", "startTime": "08:00", "endDate": "2026-02-28", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-29 08:00 ~ 2026-01-29 10:00", "startDate": "2026-01-29", "startTime": "08:00", "endDate": "2026-01-29", "endTime": "10:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-29 15:00 ~ 2026-01-29 17:00", "startDate": "2026-01-29", "startTime": "15:00", "endDate": "2026-01-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-01-29 15:00 ~ 2026-01-29 17:00", "startDate": "2026-01-29", "startTime": "15:00", "endDate": "2026-01-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-01-30 08:00 ~ 2026-01-30 10:00", "startDate": "2026-01-30", "startTime": "08:00", "endDate": "2026-01-30", "endTime": "10:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-01-30 08:00 ~ 2026-01-30 17:00", "startDate": "2026-01-30", "startTime": "08:00", "endDate": "2026-01-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-01-31 17:00 ~ 2026-02-05 17:00", "startDate": "2026-01-31", "startTime": "17:00", "endDate": "2026-02-05", "endTime": "17:00", "location": "國外"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-02-02 08:00 ~ 2026-02-02 17:00", "startDate": "2026-02-02", "startTime": "08:00", "endDate": "2026-02-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-02 08:00 ~ 2026-02-03 17:00", "startDate": "2026-02-02", "startTime": "08:00", "endDate": "2026-02-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-02-02 08:00 ~ 2026-02-02 17:00", "startDate": "2026-02-02", "startTime": "08:00", "endDate": "2026-02-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-02-02 13:00 ~ 2026-02-02 17:00", "startDate": "2026-02-02", "startTime": "13:00", "endDate": "2026-02-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-02-02 16:00 ~ 2026-02-02 17:00", "startDate": "2026-02-02", "startTime": "16:00", "endDate": "2026-02-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-02-03 08:00 ~ 2026-02-05 17:00", "startDate": "2026-02-03", "startTime": "08:00", "endDate": "2026-02-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-02-03 08:00 ~ 2026-02-05 17:00", "startDate": "2026-02-03", "startTime": "08:00", "endDate": "2026-02-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-02-04 08:00 ~ 2026-02-04 12:00", "startDate": "2026-02-04", "startTime": "08:00", "endDate": "2026-02-04", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-02-04 08:00 ~ 2026-02-04 17:00", "startDate": "2026-02-04", "startTime": "08:00", "endDate": "2026-02-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-02-04 08:00 ~ 2026-02-04 12:00", "startDate": "2026-02-04", "startTime": "08:00", "endDate": "2026-02-04", "endTime": "12:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-02-04 16:00 ~ 2026-02-05 08:00", "startDate": "2026-02-04", "startTime": "16:00", "endDate": "2026-02-05", "endTime": "08:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-05 08:00 ~ 2026-02-05 11:00", "startDate": "2026-02-05", "startTime": "08:00", "endDate": "2026-02-05", "endTime": "11:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-02-05 08:00 ~ 2026-02-05 17:00", "startDate": "2026-02-05", "startTime": "08:00", "endDate": "2026-02-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-02-05 10:00 ~ 2026-02-05 11:00", "startDate": "2026-02-05", "startTime": "10:00", "endDate": "2026-02-05", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-06 08:00 ~ 2026-02-06 11:00", "startDate": "2026-02-06", "startTime": "08:00", "endDate": "2026-02-06", "endTime": "11:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-02-06 08:00 ~ 2026-02-06 17:00", "startDate": "2026-02-06", "startTime": "08:00", "endDate": "2026-02-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-02-06 08:00 ~ 2026-02-06 17:00", "startDate": "2026-02-06", "startTime": "08:00", "endDate": "2026-02-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-02-06 08:00 ~ 2026-02-06 17:00", "startDate": "2026-02-06", "startTime": "08:00", "endDate": "2026-02-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-02-06 08:00 ~ 2026-02-06 17:00", "startDate": "2026-02-06", "startTime": "08:00", "endDate": "2026-02-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-02-09 08:00 ~ 2026-02-09 17:00", "startDate": "2026-02-09", "startTime": "08:00", "endDate": "2026-02-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-09 08:00 ~ 2026-02-09 11:00", "startDate": "2026-02-09", "startTime": "08:00", "endDate": "2026-02-09", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-09 13:00 ~ 2026-02-09 17:00", "startDate": "2026-02-09", "startTime": "13:00", "endDate": "2026-02-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-02-09 14:00 ~ 2026-02-09 17:00", "startDate": "2026-02-09", "startTime": "14:00", "endDate": "2026-02-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-02-09 16:00 ~ 2026-02-09 17:00", "startDate": "2026-02-09", "startTime": "16:00", "endDate": "2026-02-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-10 08:00 ~ 2026-02-10 11:00", "startDate": "2026-02-10", "startTime": "08:00", "endDate": "2026-02-10", "endTime": "11:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-02-10 08:00 ~ 2026-02-11 17:00", "startDate": "2026-02-10", "startTime": "08:00", "endDate": "2026-02-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-02-10 08:00 ~ 2026-02-11 17:00", "startDate": "2026-02-10", "startTime": "08:00", "endDate": "2026-02-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-02-10 08:00 ~ 2026-02-11 17:00", "startDate": "2026-02-10", "startTime": "08:00", "endDate": "2026-02-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-10 16:00 ~ 2026-02-10 17:00", "startDate": "2026-02-10", "startTime": "16:00", "endDate": "2026-02-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-02-11 08:00 ~ 2026-02-11 12:00", "startDate": "2026-02-11", "startTime": "08:00", "endDate": "2026-02-11", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-11 13:00 ~ 2026-02-11 17:00", "startDate": "2026-02-11", "startTime": "13:00", "endDate": "2026-02-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-12 08:00 ~ 2026-02-12 11:00", "startDate": "2026-02-12", "startTime": "08:00", "endDate": "2026-02-12", "endTime": "11:00", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-02-12 08:00 ~ 2026-02-13 17:00", "startDate": "2026-02-12", "startTime": "08:00", "endDate": "2026-02-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-02-12 08:00 ~ 2026-02-13 17:00", "startDate": "2026-02-12", "startTime": "08:00", "endDate": "2026-02-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-02-12 13:00 ~ 2026-02-12 17:00", "startDate": "2026-02-12", "startTime": "13:00", "endDate": "2026-02-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-02-13 08:00 ~ 2026-02-13 17:00", "startDate": "2026-02-13", "startTime": "08:00", "endDate": "2026-02-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-02-13 09:00 ~ 2026-02-13 17:00", "startDate": "2026-02-13", "startTime": "09:00", "endDate": "2026-02-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-02-15 09:00 ~ 2026-02-19 20:00", "startDate": "2026-02-15", "startTime": "09:00", "endDate": "2026-02-19", "endTime": "20:00", "location": "國外"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-02-21 08:00 ~ 2026-02-26 12:00", "startDate": "2026-02-21", "startTime": "08:00", "endDate": "2026-02-26", "endTime": "12:00", "location": "國外"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-02-23 08:00 ~ 2026-02-25 17:00", "startDate": "2026-02-23", "startTime": "08:00", "endDate": "2026-02-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-02-23 08:00 ~ 2026-02-24 17:00", "startDate": "2026-02-23", "startTime": "08:00", "endDate": "2026-02-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-02-23 08:00 ~ 2026-02-24 17:00", "startDate": "2026-02-23", "startTime": "08:00", "endDate": "2026-02-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-02-23 16:00 ~ 2026-02-23 17:00", "startDate": "2026-02-23", "startTime": "16:00", "endDate": "2026-02-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-02-24 08:00 ~ 2026-02-24 17:00", "startDate": "2026-02-24", "startTime": "08:00", "endDate": "2026-02-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-02-25 08:00 ~ 2026-02-26 17:00", "startDate": "2026-02-25", "startTime": "08:00", "endDate": "2026-02-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-02-25 08:00 ~ 2026-02-26 17:00", "startDate": "2026-02-25", "startTime": "08:00", "endDate": "2026-02-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-02-25 08:00 ~ 2026-02-25 17:00", "startDate": "2026-02-25", "startTime": "08:00", "endDate": "2026-02-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-02-25 08:00 ~ 2026-02-25 12:00", "startDate": "2026-02-25", "startTime": "08:00", "endDate": "2026-02-25", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-02-26 08:00 ~ 2026-02-26 17:00", "startDate": "2026-02-26", "startTime": "08:00", "endDate": "2026-02-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-02-26 08:00 ~ 2026-03-24 17:00", "startDate": "2026-02-26", "startTime": "08:00", "endDate": "2026-03-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-02-26 10:00 ~ 2026-02-26 17:00", "startDate": "2026-02-26", "startTime": "10:00", "endDate": "2026-02-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-02 16:00 ~ 2026-03-02 17:00", "startDate": "2026-03-02", "startTime": "16:00", "endDate": "2026-03-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-03-03 12:00 ~ 2026-03-03 17:00", "startDate": "2026-03-03", "startTime": "12:00", "endDate": "2026-03-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-03 16:00 ~ 2026-03-03 17:00", "startDate": "2026-03-03", "startTime": "16:00", "endDate": "2026-03-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-04 08:00 ~ 2026-03-04 12:00", "startDate": "2026-03-04", "startTime": "08:00", "endDate": "2026-03-04", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-05 08:00 ~ 2026-03-05 10:00", "startDate": "2026-03-05", "startTime": "08:00", "endDate": "2026-03-05", "endTime": "10:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-03-05 08:00 ~ 2026-03-05 17:00", "startDate": "2026-03-05", "startTime": "08:00", "endDate": "2026-03-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-05 14:00 ~ 2026-03-05 17:00", "startDate": "2026-03-05", "startTime": "14:00", "endDate": "2026-03-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-06 08:00 ~ 2026-03-06 12:00", "startDate": "2026-03-06", "startTime": "08:00", "endDate": "2026-03-06", "endTime": "12:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-03-06 08:00 ~ 2026-03-06 17:00", "startDate": "2026-03-06", "startTime": "08:00", "endDate": "2026-03-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-03-06 08:00 ~ 2026-03-06 17:00", "startDate": "2026-03-06", "startTime": "08:00", "endDate": "2026-03-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-03-07 08:00 ~ 2026-03-12 17:00", "startDate": "2026-03-07", "startTime": "08:00", "endDate": "2026-03-12", "endTime": "17:00", "location": "國外"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-03-09 08:00 ~ 2026-03-09 17:00", "startDate": "2026-03-09", "startTime": "08:00", "endDate": "2026-03-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-09 16:00 ~ 2026-03-09 17:00", "startDate": "2026-03-09", "startTime": "16:00", "endDate": "2026-03-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-03-10 15:00 ~ 2026-03-21 17:00", "startDate": "2026-03-10", "startTime": "15:00", "endDate": "2026-03-21", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-10 16:00 ~ 2026-03-10 17:00", "startDate": "2026-03-10", "startTime": "16:00", "endDate": "2026-03-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-11 08:00 ~ 2026-03-11 12:00", "startDate": "2026-03-11", "startTime": "08:00", "endDate": "2026-03-11", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-11 08:00 ~ 2026-03-11 12:00", "startDate": "2026-03-11", "startTime": "08:00", "endDate": "2026-03-11", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-12 08:00 ~ 2026-03-12 17:00", "startDate": "2026-03-12", "startTime": "08:00", "endDate": "2026-03-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-03-12 12:00 ~ 2026-03-12 17:00", "startDate": "2026-03-12", "startTime": "12:00", "endDate": "2026-03-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-03-13 08:00 ~ 2026-03-13 12:00", "startDate": "2026-03-13", "startTime": "08:00", "endDate": "2026-03-13", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-03-13 08:00 ~ 2026-03-14 17:00", "startDate": "2026-03-13", "startTime": "08:00", "endDate": "2026-03-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-13 08:00 ~ 2026-03-13 14:00", "startDate": "2026-03-13", "startTime": "08:00", "endDate": "2026-03-13", "endTime": "14:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-16 08:00 ~ 2026-03-16 11:00", "startDate": "2026-03-16", "startTime": "08:00", "endDate": "2026-03-16", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-16 16:00 ~ 2026-03-16 17:00", "startDate": "2026-03-16", "startTime": "16:00", "endDate": "2026-03-16", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-03-17 08:00 ~ 2026-03-17 17:00", "startDate": "2026-03-17", "startTime": "08:00", "endDate": "2026-03-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-17 08:00 ~ 2026-03-17 11:00", "startDate": "2026-03-17", "startTime": "08:00", "endDate": "2026-03-17", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-18 08:00 ~ 2026-03-18 12:00", "startDate": "2026-03-18", "startTime": "08:00", "endDate": "2026-03-18", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-18 08:00 ~ 2026-03-18 12:00", "startDate": "2026-03-18", "startTime": "08:00", "endDate": "2026-03-18", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-18 08:00 ~ 2026-03-18 17:00", "startDate": "2026-03-18", "startTime": "08:00", "endDate": "2026-03-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-18 12:00 ~ 2026-03-18 16:00", "startDate": "2026-03-18", "startTime": "12:00", "endDate": "2026-03-18", "endTime": "16:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-19 08:00 ~ 2026-03-19 11:00", "startDate": "2026-03-19", "startTime": "08:00", "endDate": "2026-03-19", "endTime": "11:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-03-19 08:00 ~ 2026-03-19 17:00", "startDate": "2026-03-19", "startTime": "08:00", "endDate": "2026-03-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-20 08:00 ~ 2026-03-20 12:00", "startDate": "2026-03-20", "startTime": "08:00", "endDate": "2026-03-20", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-23 08:00 ~ 2026-03-23 17:00", "startDate": "2026-03-23", "startTime": "08:00", "endDate": "2026-03-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-03-23 08:00 ~ 2026-03-23 12:00", "startDate": "2026-03-23", "startTime": "08:00", "endDate": "2026-03-23", "endTime": "12:00", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-03-23 08:00 ~ 2026-03-23 12:00", "startDate": "2026-03-23", "startTime": "08:00", "endDate": "2026-03-23", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-23 08:00 ~ 2026-03-23 17:00", "startDate": "2026-03-23", "startTime": "08:00", "endDate": "2026-03-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-03-23 08:00 ~ 2026-03-23 17:00", "startDate": "2026-03-23", "startTime": "08:00", "endDate": "2026-03-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-23 16:00 ~ 2026-03-23 17:00", "startDate": "2026-03-23", "startTime": "16:00", "endDate": "2026-03-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-24 08:00 ~ 2026-03-24 17:00", "startDate": "2026-03-24", "startTime": "08:00", "endDate": "2026-03-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-25 08:00 ~ 2026-03-25 12:00", "startDate": "2026-03-25", "startTime": "08:00", "endDate": "2026-03-25", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-25 08:00 ~ 2026-03-25 12:00", "startDate": "2026-03-25", "startTime": "08:00", "endDate": "2026-03-25", "endTime": "12:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-03-26 08:00 ~ 2026-04-02 17:00", "startDate": "2026-03-26", "startTime": "08:00", "endDate": "2026-04-02", "endTime": "17:00", "location": "國外"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-03-26 08:00 ~ 2026-03-31 17:00", "startDate": "2026-03-26", "startTime": "08:00", "endDate": "2026-03-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-03-27 00:00 ~ 2026-03-27 23:59", "startDate": "2026-03-27", "startTime": "00:00", "endDate": "2026-03-27", "endTime": "23:59", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-27 08:00 ~ 2026-03-27 09:00", "startDate": "2026-03-27", "startTime": "08:00", "endDate": "2026-03-27", "endTime": "09:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-03-27 08:00 ~ 2026-04-12 17:00", "startDate": "2026-03-27", "startTime": "08:00", "endDate": "2026-04-12", "endTime": "17:00", "location": "國外"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-27 08:00 ~ 2026-03-27 17:00", "startDate": "2026-03-27", "startTime": "08:00", "endDate": "2026-03-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-03-27 08:00 ~ 2026-03-27 17:00", "startDate": "2026-03-27", "startTime": "08:00", "endDate": "2026-03-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-03-28 00:00 ~ 2026-03-29 23:59", "startDate": "2026-03-28", "startTime": "00:00", "endDate": "2026-03-29", "endTime": "23:59", "location": "國外"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-03-29 08:00 ~ 2026-03-29 17:00", "startDate": "2026-03-29", "startTime": "08:00", "endDate": "2026-03-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-03-30 08:00 ~ 2026-03-30 17:00", "startDate": "2026-03-30", "startTime": "08:00", "endDate": "2026-03-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-30 08:00 ~ 2026-03-30 11:00", "startDate": "2026-03-30", "startTime": "08:00", "endDate": "2026-03-30", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-03-30 16:00 ~ 2026-03-30 17:00", "startDate": "2026-03-30", "startTime": "16:00", "endDate": "2026-03-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-03-31 08:00 ~ 2026-03-31 17:00", "startDate": "2026-03-31", "startTime": "08:00", "endDate": "2026-03-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-01 08:00 ~ 2026-04-01 09:00", "startDate": "2026-04-01", "startTime": "08:00", "endDate": "2026-04-01", "endTime": "09:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-04-01 08:00 ~ 2026-04-01 12:00", "startDate": "2026-04-01", "startTime": "08:00", "endDate": "2026-04-01", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-02 08:00 ~ 2026-04-02 11:00", "startDate": "2026-04-02", "startTime": "08:00", "endDate": "2026-04-02", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-04-02 08:00 ~ 2026-04-07 17:00", "startDate": "2026-04-02", "startTime": "08:00", "endDate": "2026-04-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-04-02 13:00 ~ 2026-04-02 17:00", "startDate": "2026-04-02", "startTime": "13:00", "endDate": "2026-04-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-04-04 08:00 ~ 2026-04-16 17:00", "startDate": "2026-04-04", "startTime": "08:00", "endDate": "2026-04-16", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-07 08:00 ~ 2026-04-07 11:00", "startDate": "2026-04-07", "startTime": "08:00", "endDate": "2026-04-07", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-04-08 08:00 ~ 2026-04-08 12:00", "startDate": "2026-04-08", "startTime": "08:00", "endDate": "2026-04-08", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-04-08 08:00 ~ 2026-04-08 12:00", "startDate": "2026-04-08", "startTime": "08:00", "endDate": "2026-04-08", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-08 08:00 ~ 2026-04-08 09:00", "startDate": "2026-04-08", "startTime": "08:00", "endDate": "2026-04-08", "endTime": "09:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-08 09:00 ~ 2026-04-08 17:00", "startDate": "2026-04-08", "startTime": "09:00", "endDate": "2026-04-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-09 08:00 ~ 2026-04-09 11:00", "startDate": "2026-04-09", "startTime": "08:00", "endDate": "2026-04-09", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-10 08:00 ~ 2026-04-10 10:00", "startDate": "2026-04-10", "startTime": "08:00", "endDate": "2026-04-10", "endTime": "10:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-13 08:00 ~ 2026-04-14 17:00", "startDate": "2026-04-13", "startTime": "08:00", "endDate": "2026-04-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-04-13 12:00 ~ 2026-04-13 17:00", "startDate": "2026-04-13", "startTime": "12:00", "endDate": "2026-04-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-04-13 16:00 ~ 2026-04-13 17:00", "startDate": "2026-04-13", "startTime": "16:00", "endDate": "2026-04-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-04-15 08:00 ~ 2026-04-15 12:00", "startDate": "2026-04-15", "startTime": "08:00", "endDate": "2026-04-15", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-15 08:00 ~ 2026-04-15 11:00", "startDate": "2026-04-15", "startTime": "08:00", "endDate": "2026-04-15", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-16 08:00 ~ 2026-04-16 11:00", "startDate": "2026-04-16", "startTime": "08:00", "endDate": "2026-04-16", "endTime": "11:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-04-16 13:00 ~ 2026-04-16 17:00", "startDate": "2026-04-16", "startTime": "13:00", "endDate": "2026-04-16", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-17 08:00 ~ 2026-04-17 10:00", "startDate": "2026-04-17", "startTime": "08:00", "endDate": "2026-04-17", "endTime": "10:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-04-17 11:00 ~ 2026-04-17 17:00", "startDate": "2026-04-17", "startTime": "11:00", "endDate": "2026-04-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-20 08:00 ~ 2026-04-20 12:00", "startDate": "2026-04-20", "startTime": "08:00", "endDate": "2026-04-20", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-04-20 09:00 ~ 2026-04-20 12:30", "startDate": "2026-04-20", "startTime": "09:00", "endDate": "2026-04-20", "endTime": "12:30", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-20 16:00 ~ 2026-04-20 17:00", "startDate": "2026-04-20", "startTime": "16:00", "endDate": "2026-04-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-04-20 16:00 ~ 2026-04-20 17:00", "startDate": "2026-04-20", "startTime": "16:00", "endDate": "2026-04-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-04-20 16:00 ~ 2026-04-20 17:00", "startDate": "2026-04-20", "startTime": "16:00", "endDate": "2026-04-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-21 08:00 ~ 2026-04-21 11:00", "startDate": "2026-04-21", "startTime": "08:00", "endDate": "2026-04-21", "endTime": "11:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-04-21 08:00 ~ 2026-04-21 17:00", "startDate": "2026-04-21", "startTime": "08:00", "endDate": "2026-04-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-22 08:00 ~ 2026-04-22 09:00", "startDate": "2026-04-22", "startTime": "08:00", "endDate": "2026-04-22", "endTime": "09:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-04-22 08:00 ~ 2026-04-22 12:00", "startDate": "2026-04-22", "startTime": "08:00", "endDate": "2026-04-22", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-23 08:00 ~ 2026-04-23 11:00", "startDate": "2026-04-23", "startTime": "08:00", "endDate": "2026-04-23", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-04-23 08:00 ~ 2026-04-23 17:00", "startDate": "2026-04-23", "startTime": "08:00", "endDate": "2026-04-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-04-23 13:00 ~ 2026-04-23 17:00", "startDate": "2026-04-23", "startTime": "13:00", "endDate": "2026-04-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-04-23 15:00 ~ 2026-04-23 17:00", "startDate": "2026-04-23", "startTime": "15:00", "endDate": "2026-04-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-04-24 12:00 ~ 2026-04-24 17:00", "startDate": "2026-04-24", "startTime": "12:00", "endDate": "2026-04-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-04-24 12:00 ~ 2026-04-24 17:00", "startDate": "2026-04-24", "startTime": "12:00", "endDate": "2026-04-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-04-25 08:00 ~ 2026-04-25 17:00", "startDate": "2026-04-25", "startTime": "08:00", "endDate": "2026-04-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-04-26 08:00 ~ 2026-04-26 17:00", "startDate": "2026-04-26", "startTime": "08:00", "endDate": "2026-04-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-27 08:00 ~ 2026-04-27 09:00", "startDate": "2026-04-27", "startTime": "08:00", "endDate": "2026-04-27", "endTime": "09:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-04-27 16:00 ~ 2026-04-27 17:00", "startDate": "2026-04-27", "startTime": "16:00", "endDate": "2026-04-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-28 08:00 ~ 2026-04-28 09:00", "startDate": "2026-04-28", "startTime": "08:00", "endDate": "2026-04-28", "endTime": "09:00", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-04-28 08:00 ~ 2026-04-30 17:00", "startDate": "2026-04-28", "startTime": "08:00", "endDate": "2026-04-30", "endTime": "17:00", "location": "國外"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-04-29 08:00 ~ 2026-04-29 12:00", "startDate": "2026-04-29", "startTime": "08:00", "endDate": "2026-04-29", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-04-30 08:00 ~ 2026-04-30 13:00", "startDate": "2026-04-30", "startTime": "08:00", "endDate": "2026-04-30", "endTime": "13:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-04-30 08:00 ~ 2026-04-30 09:00", "startDate": "2026-04-30", "startTime": "08:00", "endDate": "2026-04-30", "endTime": "09:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-04-30 14:00 ~ 2026-04-30 17:30", "startDate": "2026-04-30", "startTime": "14:00", "endDate": "2026-04-30", "endTime": "17:30", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-04 08:00 ~ 2026-05-06 17:00", "startDate": "2026-05-04", "startTime": "08:00", "endDate": "2026-05-06", "endTime": "17:00", "location": "國外"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-05-04 08:00 ~ 2026-05-04 13:00", "startDate": "2026-05-04", "startTime": "08:00", "endDate": "2026-05-04", "endTime": "13:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-05-04 16:00 ~ 2026-05-04 17:00", "startDate": "2026-05-04", "startTime": "16:00", "endDate": "2026-05-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-05-04 16:00 ~ 2026-05-04 17:00", "startDate": "2026-05-04", "startTime": "16:00", "endDate": "2026-05-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-05-05 08:00 ~ 2026-05-05 17:00", "startDate": "2026-05-05", "startTime": "08:00", "endDate": "2026-05-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-05-05 12:00 ~ 2026-05-05 17:00", "startDate": "2026-05-05", "startTime": "12:00", "endDate": "2026-05-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-05-05 16:00 ~ 2026-05-05 17:00", "startDate": "2026-05-05", "startTime": "16:00", "endDate": "2026-05-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-05-06 08:00 ~ 2026-05-06 12:00", "startDate": "2026-05-06", "startTime": "08:00", "endDate": "2026-05-06", "endTime": "12:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-05-07 08:00 ~ 2026-05-07 17:00", "startDate": "2026-05-07", "startTime": "08:00", "endDate": "2026-05-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-07 08:00 ~ 2026-05-07 17:00", "startDate": "2026-05-07", "startTime": "08:00", "endDate": "2026-05-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-08 08:00 ~ 2026-05-08 11:00", "startDate": "2026-05-08", "startTime": "08:00", "endDate": "2026-05-08", "endTime": "11:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-05-08 15:00 ~ 2026-05-08 17:00", "startDate": "2026-05-08", "startTime": "15:00", "endDate": "2026-05-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-11 08:00 ~ 2026-05-11 11:00", "startDate": "2026-05-11", "startTime": "08:00", "endDate": "2026-05-11", "endTime": "11:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-05-11 08:00 ~ 2026-05-11 12:00", "startDate": "2026-05-11", "startTime": "08:00", "endDate": "2026-05-11", "endTime": "12:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-05-11 08:00 ~ 2026-05-11 17:00", "startDate": "2026-05-11", "startTime": "08:00", "endDate": "2026-05-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-05-11 12:00 ~ 2026-05-11 17:00", "startDate": "2026-05-11", "startTime": "12:00", "endDate": "2026-05-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-05-11 16:00 ~ 2026-05-11 17:00", "startDate": "2026-05-11", "startTime": "16:00", "endDate": "2026-05-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-05-11 16:00 ~ 2026-05-11 17:00", "startDate": "2026-05-11", "startTime": "16:00", "endDate": "2026-05-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-11 16:00 ~ 2026-05-11 17:00", "startDate": "2026-05-11", "startTime": "16:00", "endDate": "2026-05-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-12 08:00 ~ 2026-05-12 09:00", "startDate": "2026-05-12", "startTime": "08:00", "endDate": "2026-05-12", "endTime": "09:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-05-12 08:00 ~ 2026-05-13 17:00", "startDate": "2026-05-12", "startTime": "08:00", "endDate": "2026-05-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-05-12 14:00 ~ 2026-05-12 17:00", "startDate": "2026-05-12", "startTime": "14:00", "endDate": "2026-05-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-13 08:00 ~ 2026-05-13 09:00", "startDate": "2026-05-13", "startTime": "08:00", "endDate": "2026-05-13", "endTime": "09:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-05-13 08:00 ~ 2026-05-13 12:00", "startDate": "2026-05-13", "startTime": "08:00", "endDate": "2026-05-13", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-05-14 09:00 ~ 2026-05-14 11:00", "startDate": "2026-05-14", "startTime": "09:00", "endDate": "2026-05-14", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-05-15 08:00 ~ 2026-05-15 17:00", "startDate": "2026-05-15", "startTime": "08:00", "endDate": "2026-05-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-15 08:00 ~ 2026-05-15 11:00", "startDate": "2026-05-15", "startTime": "08:00", "endDate": "2026-05-15", "endTime": "11:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-05-17 08:00 ~ 2026-05-21 17:00", "startDate": "2026-05-17", "startTime": "08:00", "endDate": "2026-05-21", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-18 08:00 ~ 2026-05-18 17:00", "startDate": "2026-05-18", "startTime": "08:00", "endDate": "2026-05-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-05-18 08:00 ~ 2026-05-18 17:00", "startDate": "2026-05-18", "startTime": "08:00", "endDate": "2026-05-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-05-18 15:00 ~ 2026-05-18 17:00", "startDate": "2026-05-18", "startTime": "15:00", "endDate": "2026-05-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-05-18 16:00 ~ 2026-05-18 17:00", "startDate": "2026-05-18", "startTime": "16:00", "endDate": "2026-05-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-19 08:00 ~ 2026-05-20 17:00", "startDate": "2026-05-19", "startTime": "08:00", "endDate": "2026-05-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-05-19 08:00 ~ 2026-05-19 17:00", "startDate": "2026-05-19", "startTime": "08:00", "endDate": "2026-05-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-05-20 05:30 ~ 2026-05-21 23:59", "startDate": "2026-05-20", "startTime": "05:30", "endDate": "2026-05-21", "endTime": "23:59", "location": "國外"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-05-20 08:00 ~ 2026-05-20 12:00", "startDate": "2026-05-20", "startTime": "08:00", "endDate": "2026-05-20", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-21 08:00 ~ 2026-05-21 11:00", "startDate": "2026-05-21", "startTime": "08:00", "endDate": "2026-05-21", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-05-21 09:00 ~ 2026-05-21 12:00", "startDate": "2026-05-21", "startTime": "09:00", "endDate": "2026-05-21", "endTime": "12:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-05-21 15:00 ~ 2026-05-21 17:00", "startDate": "2026-05-21", "startTime": "15:00", "endDate": "2026-05-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-05-22 00:00 ~ 2026-05-23 21:30", "startDate": "2026-05-22", "startTime": "00:00", "endDate": "2026-05-23", "endTime": "21:30", "location": "國外"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-05-23 08:00 ~ 2026-05-25 17:00", "startDate": "2026-05-23", "startTime": "08:00", "endDate": "2026-05-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-05-23 08:00 ~ 2026-05-25 17:00", "startDate": "2026-05-23", "startTime": "08:00", "endDate": "2026-05-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2026-05-24 08:00 ~ 2026-06-02 17:00", "startDate": "2026-05-24", "startTime": "08:00", "endDate": "2026-06-02", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-05-25 16:00 ~ 2026-05-25 17:00", "startDate": "2026-05-25", "startTime": "16:00", "endDate": "2026-05-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-05-27 08:00 ~ 2026-05-27 12:00", "startDate": "2026-05-27", "startTime": "08:00", "endDate": "2026-05-27", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-28 08:00 ~ 2026-05-28 11:00", "startDate": "2026-05-28", "startTime": "08:00", "endDate": "2026-05-28", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-05-29 08:00 ~ 2026-06-01 23:00", "startDate": "2026-05-29", "startTime": "08:00", "endDate": "2026-06-01", "endTime": "23:00", "location": "國外"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-05-29 08:00 ~ 2026-05-29 17:00", "startDate": "2026-05-29", "startTime": "08:00", "endDate": "2026-05-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-29 11:00 ~ 2026-05-29 13:00", "startDate": "2026-05-29", "startTime": "11:00", "endDate": "2026-05-29", "endTime": "13:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-05-29 12:00 ~ 2026-05-29 17:00", "startDate": "2026-05-29", "startTime": "12:00", "endDate": "2026-05-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-05-29 13:00 ~ 2026-05-29 17:00", "startDate": "2026-05-29", "startTime": "13:00", "endDate": "2026-05-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-01 08:00 ~ 2026-06-01 11:00", "startDate": "2026-06-01", "startTime": "08:00", "endDate": "2026-06-01", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-06-01 08:00 ~ 2026-06-01 17:00", "startDate": "2026-06-01", "startTime": "08:00", "endDate": "2026-06-01", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-06-01 08:00 ~ 2026-06-01 12:00", "startDate": "2026-06-01", "startTime": "08:00", "endDate": "2026-06-01", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-01 16:00 ~ 2026-06-01 17:00", "startDate": "2026-06-01", "startTime": "16:00", "endDate": "2026-06-01", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-02 08:00 ~ 2026-06-02 11:00", "startDate": "2026-06-02", "startTime": "08:00", "endDate": "2026-06-02", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-03 08:00 ~ 2026-06-03 11:00", "startDate": "2026-06-03", "startTime": "08:00", "endDate": "2026-06-03", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-03 08:00 ~ 2026-06-03 12:00", "startDate": "2026-06-03", "startTime": "08:00", "endDate": "2026-06-03", "endTime": "12:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-06-03 08:00 ~ 2026-06-03 17:00", "startDate": "2026-06-03", "startTime": "08:00", "endDate": "2026-06-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-06-03 08:00 ~ 2026-06-03 17:00", "startDate": "2026-06-03", "startTime": "08:00", "endDate": "2026-06-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-06-04 08:00 ~ 2026-06-04 12:00", "startDate": "2026-06-04", "startTime": "08:00", "endDate": "2026-06-04", "endTime": "12:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-06-04 12:00 ~ 2026-06-04 17:00", "startDate": "2026-06-04", "startTime": "12:00", "endDate": "2026-06-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-04 12:00 ~ 2026-06-04 17:00", "startDate": "2026-06-04", "startTime": "12:00", "endDate": "2026-06-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-05 08:00 ~ 2026-06-05 09:00", "startDate": "2026-06-05", "startTime": "08:00", "endDate": "2026-06-05", "endTime": "09:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-06-05 12:00 ~ 2026-06-05 17:00", "startDate": "2026-06-05", "startTime": "12:00", "endDate": "2026-06-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-06-06 08:00 ~ 2026-06-06 12:00", "startDate": "2026-06-06", "startTime": "08:00", "endDate": "2026-06-06", "endTime": "12:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-06 08:00 ~ 2026-06-06 12:00", "startDate": "2026-06-06", "startTime": "08:00", "endDate": "2026-06-06", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-06-06 08:00 ~ 2026-06-08 17:00", "startDate": "2026-06-06", "startTime": "08:00", "endDate": "2026-06-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-08 08:00 ~ 2026-06-08 17:00", "startDate": "2026-06-08", "startTime": "08:00", "endDate": "2026-06-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-06-08 12:00 ~ 2026-06-08 17:00", "startDate": "2026-06-08", "startTime": "12:00", "endDate": "2026-06-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-06-08 16:00 ~ 2026-06-08 17:00", "startDate": "2026-06-08", "startTime": "16:00", "endDate": "2026-06-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-08 16:00 ~ 2026-06-08 17:00", "startDate": "2026-06-08", "startTime": "16:00", "endDate": "2026-06-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-09 08:00 ~ 2026-06-09 10:00", "startDate": "2026-06-09", "startTime": "08:00", "endDate": "2026-06-09", "endTime": "10:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-06-10 08:00 ~ 2026-06-10 12:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-10", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-10 08:00 ~ 2026-06-10 12:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-10", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-06-10 08:00 ~ 2026-06-10 13:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-10", "endTime": "13:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-06-10 08:00 ~ 2026-06-15 17:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-15", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-10 08:00 ~ 2026-06-10 17:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-06-10 08:00 ~ 2026-06-10 17:00", "startDate": "2026-06-10", "startTime": "08:00", "endDate": "2026-06-10", "endTime": "17:00", "location": "國外"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-06-11 08:00 ~ 2026-06-12 17:00", "startDate": "2026-06-11", "startTime": "08:00", "endDate": "2026-06-12", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-11 08:00 ~ 2026-06-11 11:00", "startDate": "2026-06-11", "startTime": "08:00", "endDate": "2026-06-11", "endTime": "11:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-06-11 12:00 ~ 2026-06-11 17:00", "startDate": "2026-06-11", "startTime": "12:00", "endDate": "2026-06-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-11 14:00 ~ 2026-06-11 17:00", "startDate": "2026-06-11", "startTime": "14:00", "endDate": "2026-06-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-12 08:00 ~ 2026-06-12 11:00", "startDate": "2026-06-12", "startTime": "08:00", "endDate": "2026-06-12", "endTime": "11:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-06-12 12:00 ~ 2026-06-15 12:00", "startDate": "2026-06-12", "startTime": "12:00", "endDate": "2026-06-15", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-12 12:00 ~ 2026-06-12 17:00", "startDate": "2026-06-12", "startTime": "12:00", "endDate": "2026-06-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-12 13:00 ~ 2026-06-12 17:00", "startDate": "2026-06-12", "startTime": "13:00", "endDate": "2026-06-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-06-13 08:00 ~ 2026-06-14 17:00", "startDate": "2026-06-13", "startTime": "08:00", "endDate": "2026-06-14", "endTime": "17:00", "location": "國外"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-06-13 08:00 ~ 2026-06-21 17:00", "startDate": "2026-06-13", "startTime": "08:00", "endDate": "2026-06-21", "endTime": "17:00", "location": "國外"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-06-15 08:00 ~ 2026-06-15 17:00", "startDate": "2026-06-15", "startTime": "08:00", "endDate": "2026-06-15", "endTime": "17:00", "location": "國外"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-15 08:00 ~ 2026-06-15 12:00", "startDate": "2026-06-15", "startTime": "08:00", "endDate": "2026-06-15", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-15 08:00 ~ 2026-06-15 14:00", "startDate": "2026-06-15", "startTime": "08:00", "endDate": "2026-06-15", "endTime": "14:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-06-15 09:00 ~ 2026-06-15 17:00", "startDate": "2026-06-15", "startTime": "09:00", "endDate": "2026-06-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-15 16:00 ~ 2026-06-15 17:00", "startDate": "2026-06-15", "startTime": "16:00", "endDate": "2026-06-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-16 08:00 ~ 2026-06-16 11:00", "startDate": "2026-06-16", "startTime": "08:00", "endDate": "2026-06-16", "endTime": "11:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-06-16 08:00 ~ 2026-06-17 17:00", "startDate": "2026-06-16", "startTime": "08:00", "endDate": "2026-06-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-17 08:00 ~ 2026-06-17 12:00", "startDate": "2026-06-17", "startTime": "08:00", "endDate": "2026-06-17", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-17 08:00 ~ 2026-06-17 12:00", "startDate": "2026-06-17", "startTime": "08:00", "endDate": "2026-06-17", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-06-17 08:00 ~ 2026-06-17 17:00", "startDate": "2026-06-17", "startTime": "08:00", "endDate": "2026-06-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-06-18 08:00 ~ 2026-06-18 17:00", "startDate": "2026-06-18", "startTime": "08:00", "endDate": "2026-06-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-06-18 08:00 ~ 2026-06-18 17:00", "startDate": "2026-06-18", "startTime": "08:00", "endDate": "2026-06-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-18 08:00 ~ 2026-06-18 11:00", "startDate": "2026-06-18", "startTime": "08:00", "endDate": "2026-06-18", "endTime": "11:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-18 08:00 ~ 2026-06-18 17:00", "startDate": "2026-06-18", "startTime": "08:00", "endDate": "2026-06-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-06-18 12:00 ~ 2026-06-22 12:00", "startDate": "2026-06-18", "startTime": "12:00", "endDate": "2026-06-22", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-18 15:00 ~ 2026-06-18 17:00", "startDate": "2026-06-18", "startTime": "15:00", "endDate": "2026-06-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-06-19 08:00 ~ 2026-06-21 17:00", "startDate": "2026-06-19", "startTime": "08:00", "endDate": "2026-06-21", "endTime": "17:00", "location": "國外"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-06-20 08:00 ~ 2026-06-23 17:00", "startDate": "2026-06-20", "startTime": "08:00", "endDate": "2026-06-23", "endTime": "17:00", "location": "國外"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-06-22 08:00 ~ 2026-06-22 12:00", "startDate": "2026-06-22", "startTime": "08:00", "endDate": "2026-06-22", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-06-22 08:00 ~ 2026-06-22 09:00", "startDate": "2026-06-22", "startTime": "08:00", "endDate": "2026-06-22", "endTime": "09:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-06-22 08:00 ~ 2026-06-22 09:00", "startDate": "2026-06-22", "startTime": "08:00", "endDate": "2026-06-22", "endTime": "09:00", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-06-22 08:00 ~ 2026-06-22 12:00", "startDate": "2026-06-22", "startTime": "08:00", "endDate": "2026-06-22", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-22 08:00 ~ 2026-06-22 17:00", "startDate": "2026-06-22", "startTime": "08:00", "endDate": "2026-06-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-22 16:00 ~ 2026-06-22 17:00", "startDate": "2026-06-22", "startTime": "16:00", "endDate": "2026-06-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-23 08:00 ~ 2026-06-23 13:00", "startDate": "2026-06-23", "startTime": "08:00", "endDate": "2026-06-23", "endTime": "13:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-06-23 08:00 ~ 2026-07-10 17:00", "startDate": "2026-06-23", "startTime": "08:00", "endDate": "2026-07-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-06-24 08:00 ~ 2026-06-25 17:00", "startDate": "2026-06-24", "startTime": "08:00", "endDate": "2026-06-25", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-24 08:00 ~ 2026-06-24 17:00", "startDate": "2026-06-24", "startTime": "08:00", "endDate": "2026-06-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-24 08:00 ~ 2026-06-24 12:00", "startDate": "2026-06-24", "startTime": "08:00", "endDate": "2026-06-24", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-06-24 12:00 ~ 2026-06-24 17:00", "startDate": "2026-06-24", "startTime": "12:00", "endDate": "2026-06-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-25 08:00 ~ 2026-06-25 13:00", "startDate": "2026-06-25", "startTime": "08:00", "endDate": "2026-06-25", "endTime": "13:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-25 10:00 ~ 2026-06-25 17:00", "startDate": "2026-06-25", "startTime": "10:00", "endDate": "2026-06-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-06-25 10:00 ~ 2026-06-25 12:00", "startDate": "2026-06-25", "startTime": "10:00", "endDate": "2026-06-25", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-06-26 08:00 ~ 2026-06-26 12:00", "startDate": "2026-06-26", "startTime": "08:00", "endDate": "2026-06-26", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "施雅雯(G05385)", "name": "施雅雯", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-06-26 12:00 ~ 2026-06-26 23:59", "startDate": "2026-06-26", "startTime": "12:00", "endDate": "2026-06-26", "endTime": "23:59", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-26 13:00 ~ 2026-06-26 17:00", "startDate": "2026-06-26", "startTime": "13:00", "endDate": "2026-06-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-06-27 08:00 ~ 2026-06-29 17:00", "startDate": "2026-06-27", "startTime": "08:00", "endDate": "2026-06-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-29 08:00 ~ 2026-06-29 11:00", "startDate": "2026-06-29", "startTime": "08:00", "endDate": "2026-06-29", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-06-29 12:00 ~ 2026-06-29 17:00", "startDate": "2026-06-29", "startTime": "12:00", "endDate": "2026-06-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-06-29 16:00 ~ 2026-06-29 17:00", "startDate": "2026-06-29", "startTime": "16:00", "endDate": "2026-06-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-06-30 08:00 ~ 2026-06-30 10:00", "startDate": "2026-06-30", "startTime": "08:00", "endDate": "2026-06-30", "endTime": "10:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-06-30 10:00 ~ 2026-06-30 17:00", "startDate": "2026-06-30", "startTime": "10:00", "endDate": "2026-06-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-01 08:00 ~ 2026-07-01 12:00", "startDate": "2026-07-01", "startTime": "08:00", "endDate": "2026-07-01", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-01 08:00 ~ 2026-07-01 11:00", "startDate": "2026-07-01", "startTime": "08:00", "endDate": "2026-07-01", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-01 16:00 ~ 2026-07-01 17:00", "startDate": "2026-07-01", "startTime": "16:00", "endDate": "2026-07-01", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-02 08:00 ~ 2026-07-02 10:00", "startDate": "2026-07-02", "startTime": "08:00", "endDate": "2026-07-02", "endTime": "10:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-07-02 13:00 ~ 2026-07-02 17:00", "startDate": "2026-07-02", "startTime": "13:00", "endDate": "2026-07-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-07-02 13:00 ~ 2026-07-02 17:00", "startDate": "2026-07-02", "startTime": "13:00", "endDate": "2026-07-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-03 08:00 ~ 2026-07-03 17:00", "startDate": "2026-07-03", "startTime": "08:00", "endDate": "2026-07-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-07-06 08:00 ~ 2026-07-06 17:00", "startDate": "2026-07-06", "startTime": "08:00", "endDate": "2026-07-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-06 08:00 ~ 2026-07-06 12:00", "startDate": "2026-07-06", "startTime": "08:00", "endDate": "2026-07-06", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-06 16:00 ~ 2026-07-06 17:00", "startDate": "2026-07-06", "startTime": "16:00", "endDate": "2026-07-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-07-07 08:00 ~ 2026-07-07 09:00", "startDate": "2026-07-07", "startTime": "08:00", "endDate": "2026-07-07", "endTime": "09:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-08 08:00 ~ 2026-07-08 12:00", "startDate": "2026-07-08", "startTime": "08:00", "endDate": "2026-07-08", "endTime": "12:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-07-08 08:00 ~ 2026-07-08 17:00", "startDate": "2026-07-08", "startTime": "08:00", "endDate": "2026-07-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-07-09 08:00 ~ 2026-07-09 12:00", "startDate": "2026-07-09", "startTime": "08:00", "endDate": "2026-07-09", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-09 08:00 ~ 2026-07-09 10:00", "startDate": "2026-07-09", "startTime": "08:00", "endDate": "2026-07-09", "endTime": "10:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-09 13:00 ~ 2026-07-09 17:00", "startDate": "2026-07-09", "startTime": "13:00", "endDate": "2026-07-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "施雅雯(G05385)", "name": "施雅雯", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "陳冠蓉(G05519)", "name": "陳冠蓉", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "戴睿宏(G02153)", "name": "戴睿宏", "period": "2026-07-10 00:00 ~ 2026-07-10 23:59", "startDate": "2026-07-10", "startTime": "00:00", "endDate": "2026-07-10", "endTime": "23:59", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-10 08:00 ~ 2026-07-12 17:00", "startDate": "2026-07-10", "startTime": "08:00", "endDate": "2026-07-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-07-11 08:00 ~ 2026-07-26 17:00", "startDate": "2026-07-11", "startTime": "08:00", "endDate": "2026-07-26", "endTime": "17:00", "location": "國外"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-13 08:00 ~ 2026-07-13 12:00", "startDate": "2026-07-13", "startTime": "08:00", "endDate": "2026-07-13", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-13 08:00 ~ 2026-07-14 13:00", "startDate": "2026-07-13", "startTime": "08:00", "endDate": "2026-07-14", "endTime": "13:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-13 08:00 ~ 2026-07-13 11:00", "startDate": "2026-07-13", "startTime": "08:00", "endDate": "2026-07-13", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-13 16:00 ~ 2026-07-13 17:00", "startDate": "2026-07-13", "startTime": "16:00", "endDate": "2026-07-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-07-13 16:00 ~ 2026-07-13 17:00", "startDate": "2026-07-13", "startTime": "16:00", "endDate": "2026-07-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-14 08:00 ~ 2026-07-14 11:00", "startDate": "2026-07-14", "startTime": "08:00", "endDate": "2026-07-14", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-15 08:00 ~ 2026-07-15 11:00", "startDate": "2026-07-15", "startTime": "08:00", "endDate": "2026-07-15", "endTime": "11:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-07-15 08:00 ~ 2026-07-15 17:00", "startDate": "2026-07-15", "startTime": "08:00", "endDate": "2026-07-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-15 08:00 ~ 2026-07-15 12:00", "startDate": "2026-07-15", "startTime": "08:00", "endDate": "2026-07-15", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-16 08:00 ~ 2026-07-16 11:00", "startDate": "2026-07-16", "startTime": "08:00", "endDate": "2026-07-16", "endTime": "11:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-07-16 12:00 ~ 2026-07-20 17:00", "startDate": "2026-07-16", "startTime": "12:00", "endDate": "2026-07-20", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-17 08:00 ~ 2026-07-17 11:00", "startDate": "2026-07-17", "startTime": "08:00", "endDate": "2026-07-17", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-07-17 08:00 ~ 2026-07-17 17:00", "startDate": "2026-07-17", "startTime": "08:00", "endDate": "2026-07-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-17 15:00 ~ 2026-07-17 17:00", "startDate": "2026-07-17", "startTime": "15:00", "endDate": "2026-07-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-20 08:00 ~ 2026-07-20 17:00", "startDate": "2026-07-20", "startTime": "08:00", "endDate": "2026-07-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-20 08:00 ~ 2026-07-21 17:00", "startDate": "2026-07-20", "startTime": "08:00", "endDate": "2026-07-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-07-20 08:00 ~ 2026-07-20 17:00", "startDate": "2026-07-20", "startTime": "08:00", "endDate": "2026-07-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-20 16:00 ~ 2026-07-20 17:00", "startDate": "2026-07-20", "startTime": "16:00", "endDate": "2026-07-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-21 08:00 ~ 2026-07-21 10:00", "startDate": "2026-07-21", "startTime": "08:00", "endDate": "2026-07-21", "endTime": "10:00", "location": "台灣"}, {"fullName": "徐瑋襄(G01866)", "name": "徐瑋襄", "period": "2026-07-21 12:00 ~ 2026-07-22 17:00", "startDate": "2026-07-21", "startTime": "12:00", "endDate": "2026-07-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-07-21 15:00 ~ 2026-07-21 17:00", "startDate": "2026-07-21", "startTime": "15:00", "endDate": "2026-07-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-22 08:00 ~ 2026-07-22 11:00", "startDate": "2026-07-22", "startTime": "08:00", "endDate": "2026-07-22", "endTime": "11:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-22 08:00 ~ 2026-07-22 12:00", "startDate": "2026-07-22", "startTime": "08:00", "endDate": "2026-07-22", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-22 15:00 ~ 2026-07-22 17:00", "startDate": "2026-07-22", "startTime": "15:00", "endDate": "2026-07-22", "endTime": "17:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-23 08:00 ~ 2026-07-24 17:00", "startDate": "2026-07-23", "startTime": "08:00", "endDate": "2026-07-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-07-24 08:00 ~ 2026-07-27 17:00", "startDate": "2026-07-24", "startTime": "08:00", "endDate": "2026-07-27", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-24 08:00 ~ 2026-07-26 17:00", "startDate": "2026-07-24", "startTime": "08:00", "endDate": "2026-07-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-07-24 15:00 ~ 2026-07-24 17:00", "startDate": "2026-07-24", "startTime": "15:00", "endDate": "2026-07-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-24 16:00 ~ 2026-07-24 17:00", "startDate": "2026-07-24", "startTime": "16:00", "endDate": "2026-07-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-25 15:00 ~ 2026-07-25 17:00", "startDate": "2026-07-25", "startTime": "15:00", "endDate": "2026-07-25", "endTime": "17:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-27 08:00 ~ 2026-07-27 12:00", "startDate": "2026-07-27", "startTime": "08:00", "endDate": "2026-07-27", "endTime": "12:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-07-27 08:00 ~ 2026-07-28 17:00", "startDate": "2026-07-27", "startTime": "08:00", "endDate": "2026-07-28", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-07-27 16:00 ~ 2026-07-27 17:00", "startDate": "2026-07-27", "startTime": "16:00", "endDate": "2026-07-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-07-27 16:00 ~ 2026-07-27 17:00", "startDate": "2026-07-27", "startTime": "16:00", "endDate": "2026-07-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-07-29 08:00 ~ 2026-07-29 12:00", "startDate": "2026-07-29", "startTime": "08:00", "endDate": "2026-07-29", "endTime": "12:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-07-29 08:00 ~ 2026-08-03 17:00", "startDate": "2026-07-29", "startTime": "08:00", "endDate": "2026-08-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-29 16:00 ~ 2026-07-29 17:00", "startDate": "2026-07-29", "startTime": "16:00", "endDate": "2026-07-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-07-30 08:00 ~ 2026-07-30 17:00", "startDate": "2026-07-30", "startTime": "08:00", "endDate": "2026-07-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-07-31 08:00 ~ 2026-08-02 23:59", "startDate": "2026-07-31", "startTime": "08:00", "endDate": "2026-08-02", "endTime": "23:59", "location": "國外"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-07-31 08:00 ~ 2026-07-31 17:00", "startDate": "2026-07-31", "startTime": "08:00", "endDate": "2026-07-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-07-31 12:00 ~ 2026-08-03 12:00", "startDate": "2026-07-31", "startTime": "12:00", "endDate": "2026-08-03", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-08-03 08:00 ~ 2026-08-03 17:00", "startDate": "2026-08-03", "startTime": "08:00", "endDate": "2026-08-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-03 08:00 ~ 2026-08-04 08:00", "startDate": "2026-08-03", "startTime": "08:00", "endDate": "2026-08-04", "endTime": "08:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-08-03 12:00 ~ 2026-08-03 17:00", "startDate": "2026-08-03", "startTime": "12:00", "endDate": "2026-08-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-08-03 14:00 ~ 2026-08-03 17:00", "startDate": "2026-08-03", "startTime": "14:00", "endDate": "2026-08-03", "endTime": "17:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-08-04 08:00 ~ 2026-08-04 17:00", "startDate": "2026-08-04", "startTime": "08:00", "endDate": "2026-08-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-04 08:00 ~ 2026-08-09 17:00", "startDate": "2026-08-04", "startTime": "08:00", "endDate": "2026-08-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-04 08:00 ~ 2026-08-04 11:00", "startDate": "2026-08-04", "startTime": "08:00", "endDate": "2026-08-04", "endTime": "11:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-05 08:00 ~ 2026-08-05 10:00", "startDate": "2026-08-05", "startTime": "08:00", "endDate": "2026-08-05", "endTime": "10:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-08-05 08:00 ~ 2026-08-05 12:00", "startDate": "2026-08-05", "startTime": "08:00", "endDate": "2026-08-05", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-08-05 08:00 ~ 2026-08-05 17:00", "startDate": "2026-08-05", "startTime": "08:00", "endDate": "2026-08-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-08-05 12:00 ~ 2026-08-05 17:00", "startDate": "2026-08-05", "startTime": "12:00", "endDate": "2026-08-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-06 16:00 ~ 2026-08-06 17:00", "startDate": "2026-08-06", "startTime": "16:00", "endDate": "2026-08-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-07 08:00 ~ 2026-08-07 09:00", "startDate": "2026-08-07", "startTime": "08:00", "endDate": "2026-08-07", "endTime": "09:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-08-07 08:00 ~ 2026-08-10 17:00", "startDate": "2026-08-07", "startTime": "08:00", "endDate": "2026-08-10", "endTime": "17:00", "location": "國外"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-08-07 12:00 ~ 2026-08-07 17:00", "startDate": "2026-08-07", "startTime": "12:00", "endDate": "2026-08-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-10 08:00 ~ 2026-08-10 10:00", "startDate": "2026-08-10", "startTime": "08:00", "endDate": "2026-08-10", "endTime": "10:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-10 16:00 ~ 2026-08-10 17:00", "startDate": "2026-08-10", "startTime": "16:00", "endDate": "2026-08-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-11 08:00 ~ 2026-08-11 10:00", "startDate": "2026-08-11", "startTime": "08:00", "endDate": "2026-08-11", "endTime": "10:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-08-11 08:00 ~ 2026-08-14 17:00", "startDate": "2026-08-11", "startTime": "08:00", "endDate": "2026-08-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-08-12 08:00 ~ 2026-08-12 17:00", "startDate": "2026-08-12", "startTime": "08:00", "endDate": "2026-08-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-12 08:00 ~ 2026-08-12 10:00", "startDate": "2026-08-12", "startTime": "08:00", "endDate": "2026-08-12", "endTime": "10:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-08-12 08:00 ~ 2026-08-12 12:00", "startDate": "2026-08-12", "startTime": "08:00", "endDate": "2026-08-12", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-13 08:00 ~ 2026-08-13 09:00", "startDate": "2026-08-13", "startTime": "08:00", "endDate": "2026-08-13", "endTime": "09:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-08-13 08:00 ~ 2026-08-13 17:00", "startDate": "2026-08-13", "startTime": "08:00", "endDate": "2026-08-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-08-13 12:00 ~ 2026-08-13 17:00", "startDate": "2026-08-13", "startTime": "12:00", "endDate": "2026-08-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-08-14 08:00 ~ 2026-08-14 17:00", "startDate": "2026-08-14", "startTime": "08:00", "endDate": "2026-08-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-14 08:00 ~ 2026-08-14 17:00", "startDate": "2026-08-14", "startTime": "08:00", "endDate": "2026-08-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-08-15 08:00 ~ 2026-08-15 17:00", "startDate": "2026-08-15", "startTime": "08:00", "endDate": "2026-08-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-15 09:00 ~ 2026-08-15 16:00", "startDate": "2026-08-15", "startTime": "09:00", "endDate": "2026-08-15", "endTime": "16:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-08-15 09:00 ~ 2026-08-15 16:00", "startDate": "2026-08-15", "startTime": "09:00", "endDate": "2026-08-15", "endTime": "16:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-08-17 08:00 ~ 2026-08-17 17:00", "startDate": "2026-08-17", "startTime": "08:00", "endDate": "2026-08-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-17 08:00 ~ 2026-08-17 11:00", "startDate": "2026-08-17", "startTime": "08:00", "endDate": "2026-08-17", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-17 16:00 ~ 2026-08-17 17:00", "startDate": "2026-08-17", "startTime": "16:00", "endDate": "2026-08-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-08-18 08:00 ~ 2026-08-20 17:00", "startDate": "2026-08-18", "startTime": "08:00", "endDate": "2026-08-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-18 08:00 ~ 2026-08-18 10:00", "startDate": "2026-08-18", "startTime": "08:00", "endDate": "2026-08-18", "endTime": "10:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-08-18 16:00 ~ 2026-08-18 17:00", "startDate": "2026-08-18", "startTime": "16:00", "endDate": "2026-08-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-19 08:00 ~ 2026-08-19 10:00", "startDate": "2026-08-19", "startTime": "08:00", "endDate": "2026-08-19", "endTime": "10:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-08-19 08:00 ~ 2026-08-19 12:00", "startDate": "2026-08-19", "startTime": "08:00", "endDate": "2026-08-19", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-08-19 08:00 ~ 2026-08-24 17:00", "startDate": "2026-08-19", "startTime": "08:00", "endDate": "2026-08-24", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-19 14:00 ~ 2026-08-19 17:00", "startDate": "2026-08-19", "startTime": "14:00", "endDate": "2026-08-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-19 15:00 ~ 2026-08-19 17:00", "startDate": "2026-08-19", "startTime": "15:00", "endDate": "2026-08-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-20 08:00 ~ 2026-08-20 10:00", "startDate": "2026-08-20", "startTime": "08:00", "endDate": "2026-08-20", "endTime": "10:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-08-20 12:00 ~ 2026-08-20 17:00", "startDate": "2026-08-20", "startTime": "12:00", "endDate": "2026-08-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-08-20 12:00 ~ 2026-08-20 17:00", "startDate": "2026-08-20", "startTime": "12:00", "endDate": "2026-08-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-08-21 08:00 ~ 2026-08-25 08:00", "startDate": "2026-08-21", "startTime": "08:00", "endDate": "2026-08-25", "endTime": "08:00", "location": "國外"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-08-21 08:00 ~ 2026-08-28 17:00", "startDate": "2026-08-21", "startTime": "08:00", "endDate": "2026-08-28", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-21 08:00 ~ 2026-08-21 09:00", "startDate": "2026-08-21", "startTime": "08:00", "endDate": "2026-08-21", "endTime": "09:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-08-21 08:00 ~ 2026-08-21 12:00", "startDate": "2026-08-21", "startTime": "08:00", "endDate": "2026-08-21", "endTime": "12:00", "location": "國外"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-08-21 12:00 ~ 2026-08-30 17:00", "startDate": "2026-08-21", "startTime": "12:00", "endDate": "2026-08-30", "endTime": "17:00", "location": "國外"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-08-21 12:00 ~ 2026-08-21 17:00", "startDate": "2026-08-21", "startTime": "12:00", "endDate": "2026-08-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-21 16:00 ~ 2026-08-21 17:00", "startDate": "2026-08-21", "startTime": "16:00", "endDate": "2026-08-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-08-22 08:00 ~ 2026-08-25 17:00", "startDate": "2026-08-22", "startTime": "08:00", "endDate": "2026-08-25", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-24 08:00 ~ 2026-08-24 11:00", "startDate": "2026-08-24", "startTime": "08:00", "endDate": "2026-08-24", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-24 16:00 ~ 2026-08-24 17:00", "startDate": "2026-08-24", "startTime": "16:00", "endDate": "2026-08-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-08-25 08:00 ~ 2026-08-27 17:00", "startDate": "2026-08-25", "startTime": "08:00", "endDate": "2026-08-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-25 08:00 ~ 2026-08-25 09:00", "startDate": "2026-08-25", "startTime": "08:00", "endDate": "2026-08-25", "endTime": "09:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-08-25 08:00 ~ 2026-08-27 17:00", "startDate": "2026-08-25", "startTime": "08:00", "endDate": "2026-08-27", "endTime": "17:00", "location": "國外"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-08-26 08:00 ~ 2026-08-26 17:00", "startDate": "2026-08-26", "startTime": "08:00", "endDate": "2026-08-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-08-26 08:00 ~ 2026-08-26 12:00", "startDate": "2026-08-26", "startTime": "08:00", "endDate": "2026-08-26", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-08-26 08:00 ~ 2026-08-26 17:00", "startDate": "2026-08-26", "startTime": "08:00", "endDate": "2026-08-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-08-26 08:00 ~ 2026-08-29 23:59", "startDate": "2026-08-26", "startTime": "08:00", "endDate": "2026-08-29", "endTime": "23:59", "location": "國外"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-08-26 08:00 ~ 2026-08-31 17:00", "startDate": "2026-08-26", "startTime": "08:00", "endDate": "2026-08-31", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-26 11:00 ~ 2026-08-26 17:00", "startDate": "2026-08-26", "startTime": "11:00", "endDate": "2026-08-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-27 08:00 ~ 2026-08-27 10:00", "startDate": "2026-08-27", "startTime": "08:00", "endDate": "2026-08-27", "endTime": "10:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-08-28 08:00 ~ 2026-08-28 11:00", "startDate": "2026-08-28", "startTime": "08:00", "endDate": "2026-08-28", "endTime": "11:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-28 10:00 ~ 2026-08-28 12:00", "startDate": "2026-08-28", "startTime": "10:00", "endDate": "2026-08-28", "endTime": "12:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-08-29 08:00 ~ 2026-08-29 17:00", "startDate": "2026-08-29", "startTime": "08:00", "endDate": "2026-08-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-08-31 08:00 ~ 2026-08-31 13:00", "startDate": "2026-08-31", "startTime": "08:00", "endDate": "2026-08-31", "endTime": "13:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-08-31 13:00 ~ 2026-08-31 14:00", "startDate": "2026-08-31", "startTime": "13:00", "endDate": "2026-08-31", "endTime": "14:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-08-31 16:00 ~ 2026-08-31 17:00", "startDate": "2026-08-31", "startTime": "16:00", "endDate": "2026-08-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-09-01 08:00 ~ 2026-09-01 12:00", "startDate": "2026-09-01", "startTime": "08:00", "endDate": "2026-09-01", "endTime": "12:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-09-01 12:00 ~ 2026-09-01 17:00", "startDate": "2026-09-01", "startTime": "12:00", "endDate": "2026-09-01", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-01 14:00 ~ 2026-09-01 17:00", "startDate": "2026-09-01", "startTime": "14:00", "endDate": "2026-09-01", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-09-02 08:00 ~ 2026-09-02 12:00", "startDate": "2026-09-02", "startTime": "08:00", "endDate": "2026-09-02", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-02 08:00 ~ 2026-09-02 09:00", "startDate": "2026-09-02", "startTime": "08:00", "endDate": "2026-09-02", "endTime": "09:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-02 14:00 ~ 2026-09-02 17:00", "startDate": "2026-09-02", "startTime": "14:00", "endDate": "2026-09-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-09-03 08:00 ~ 2026-09-03 12:00", "startDate": "2026-09-03", "startTime": "08:00", "endDate": "2026-09-03", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2026-09-04 08:00 ~ 2026-09-08 17:00", "startDate": "2026-09-04", "startTime": "08:00", "endDate": "2026-09-08", "endTime": "17:00", "location": "國外"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-09-04 13:00 ~ 2026-09-04 17:00", "startDate": "2026-09-04", "startTime": "13:00", "endDate": "2026-09-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-09-05 08:00 ~ 2026-09-09 17:00", "startDate": "2026-09-05", "startTime": "08:00", "endDate": "2026-09-09", "endTime": "17:00", "location": "國外"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-09-07 08:00 ~ 2026-09-07 12:00", "startDate": "2026-09-07", "startTime": "08:00", "endDate": "2026-09-07", "endTime": "12:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-09-07 08:00 ~ 2026-09-07 12:00", "startDate": "2026-09-07", "startTime": "08:00", "endDate": "2026-09-07", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-09-07 16:00 ~ 2026-09-07 17:00", "startDate": "2026-09-07", "startTime": "16:00", "endDate": "2026-09-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-09-08 12:00 ~ 2026-09-08 17:00", "startDate": "2026-09-08", "startTime": "12:00", "endDate": "2026-09-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-08 14:00 ~ 2026-09-08 17:00", "startDate": "2026-09-08", "startTime": "14:00", "endDate": "2026-09-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐健豪(G03466)", "name": "徐健豪", "period": "2026-09-09 08:00 ~ 2026-09-15 17:00", "startDate": "2026-09-09", "startTime": "08:00", "endDate": "2026-09-15", "endTime": "17:00", "location": "國外"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-09-10 15:00 ~ 2026-09-10 17:00", "startDate": "2026-09-10", "startTime": "15:00", "endDate": "2026-09-10", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-09-11 08:00 ~ 2026-09-11 17:00", "startDate": "2026-09-11", "startTime": "08:00", "endDate": "2026-09-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-11 08:00 ~ 2026-09-11 17:00", "startDate": "2026-09-11", "startTime": "08:00", "endDate": "2026-09-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-09-11 08:00 ~ 2026-09-11 17:00", "startDate": "2026-09-11", "startTime": "08:00", "endDate": "2026-09-11", "endTime": "17:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-09-12 08:00 ~ 2026-09-28 17:00", "startDate": "2026-09-12", "startTime": "08:00", "endDate": "2026-09-28", "endTime": "17:00", "location": "國外"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-09-12 08:00 ~ 2026-09-12 17:00", "startDate": "2026-09-12", "startTime": "08:00", "endDate": "2026-09-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-09-14 08:00 ~ 2026-09-18 23:00", "startDate": "2026-09-14", "startTime": "08:00", "endDate": "2026-09-18", "endTime": "23:00", "location": "國外"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-09-14 12:00 ~ 2026-09-14 17:00", "startDate": "2026-09-14", "startTime": "12:00", "endDate": "2026-09-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-09-14 16:00 ~ 2026-09-14 17:00", "startDate": "2026-09-14", "startTime": "16:00", "endDate": "2026-09-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-15 08:00 ~ 2026-09-15 15:00", "startDate": "2026-09-15", "startTime": "08:00", "endDate": "2026-09-15", "endTime": "15:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-09-15 13:00 ~ 2026-09-15 17:00", "startDate": "2026-09-15", "startTime": "13:00", "endDate": "2026-09-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-09-16 08:00 ~ 2026-09-16 12:00", "startDate": "2026-09-16", "startTime": "08:00", "endDate": "2026-09-16", "endTime": "12:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-09-17 15:00 ~ 2026-09-17 17:00", "startDate": "2026-09-17", "startTime": "15:00", "endDate": "2026-09-17", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-18 08:00 ~ 2026-09-18 12:00", "startDate": "2026-09-18", "startTime": "08:00", "endDate": "2026-09-18", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-09-19 08:00 ~ 2026-09-19 17:00", "startDate": "2026-09-19", "startTime": "08:00", "endDate": "2026-09-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-09-19 08:00 ~ 2026-09-19 17:00", "startDate": "2026-09-19", "startTime": "08:00", "endDate": "2026-09-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-09-21 08:00 ~ 2026-09-21 12:00", "startDate": "2026-09-21", "startTime": "08:00", "endDate": "2026-09-21", "endTime": "12:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-09-21 08:00 ~ 2026-09-21 17:00", "startDate": "2026-09-21", "startTime": "08:00", "endDate": "2026-09-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-09-21 08:00 ~ 2026-09-21 09:00", "startDate": "2026-09-21", "startTime": "08:00", "endDate": "2026-09-21", "endTime": "09:00", "location": "台灣"}, {"fullName": "許瑋芸(G06372)", "name": "許瑋芸", "period": "2026-09-21 08:00 ~ 2026-09-21 09:00", "startDate": "2026-09-21", "startTime": "08:00", "endDate": "2026-09-21", "endTime": "09:00", "location": "台灣"}, {"fullName": "陳薏如(G05440)", "name": "陳薏如", "period": "2026-09-21 08:00 ~ 2026-09-21 09:00", "startDate": "2026-09-21", "startTime": "08:00", "endDate": "2026-09-21", "endTime": "09:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-09-21 15:00 ~ 2026-09-21 17:00", "startDate": "2026-09-21", "startTime": "15:00", "endDate": "2026-09-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-09-21 16:00 ~ 2026-09-21 17:00", "startDate": "2026-09-21", "startTime": "16:00", "endDate": "2026-09-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-09-22 08:00 ~ 2026-09-22 13:00", "startDate": "2026-09-22", "startTime": "08:00", "endDate": "2026-09-22", "endTime": "13:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-09-22 13:00 ~ 2026-09-27 23:59", "startDate": "2026-09-22", "startTime": "13:00", "endDate": "2026-09-27", "endTime": "23:59", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-23 08:00 ~ 2026-09-23 17:00", "startDate": "2026-09-23", "startTime": "08:00", "endDate": "2026-09-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "葉晴(G04579)", "name": "葉晴", "period": "2026-09-23 08:00 ~ 2026-09-23 12:00", "startDate": "2026-09-23", "startTime": "08:00", "endDate": "2026-09-23", "endTime": "12:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-09-23 08:00 ~ 2026-09-23 12:00", "startDate": "2026-09-23", "startTime": "08:00", "endDate": "2026-09-23", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-09-23 08:00 ~ 2026-09-23 12:00", "startDate": "2026-09-23", "startTime": "08:00", "endDate": "2026-09-23", "endTime": "12:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-09-24 08:00 ~ 2026-09-24 12:00", "startDate": "2026-09-24", "startTime": "08:00", "endDate": "2026-09-24", "endTime": "12:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-09-24 08:00 ~ 2026-09-28 17:00", "startDate": "2026-09-24", "startTime": "08:00", "endDate": "2026-09-28", "endTime": "17:00", "location": "台灣"}, {"fullName": "石庭慧(G03362)", "name": "石庭慧", "period": "2026-09-24 08:00 ~ 2026-09-24 12:00", "startDate": "2026-09-24", "startTime": "08:00", "endDate": "2026-09-24", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-24 08:00 ~ 2026-09-24 17:00", "startDate": "2026-09-24", "startTime": "08:00", "endDate": "2026-09-24", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-09-25 08:00 ~ 2026-09-29 17:00", "startDate": "2026-09-25", "startTime": "08:00", "endDate": "2026-09-29", "endTime": "17:00", "location": "國外"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-09-26 08:00 ~ 2026-10-02 17:00", "startDate": "2026-09-26", "startTime": "08:00", "endDate": "2026-10-02", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-28 08:00 ~ 2026-09-28 10:00", "startDate": "2026-09-28", "startTime": "08:00", "endDate": "2026-09-28", "endTime": "10:00", "location": "台灣"}, {"fullName": "蔡佰霖(G03527)", "name": "蔡佰霖", "period": "2026-09-28 08:00 ~ 2026-10-02 17:00", "startDate": "2026-09-28", "startTime": "08:00", "endDate": "2026-10-02", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-09-29 08:00 ~ 2026-09-29 09:00", "startDate": "2026-09-29", "startTime": "08:00", "endDate": "2026-09-29", "endTime": "09:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-09-29 15:00 ~ 2026-09-29 17:00", "startDate": "2026-09-29", "startTime": "15:00", "endDate": "2026-09-29", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-09-30 08:00 ~ 2026-09-30 12:00", "startDate": "2026-09-30", "startTime": "08:00", "endDate": "2026-09-30", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-10-02 15:00 ~ 2026-10-02 17:00", "startDate": "2026-10-02", "startTime": "15:00", "endDate": "2026-10-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-10-02 17:00 ~ 2026-10-03 17:00", "startDate": "2026-10-02", "startTime": "17:00", "endDate": "2026-10-03", "endTime": "17:00", "location": "國外"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-10-03 08:00 ~ 2026-10-11 17:00", "startDate": "2026-10-03", "startTime": "08:00", "endDate": "2026-10-11", "endTime": "17:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-10-05 08:00 ~ 2026-10-05 09:00", "startDate": "2026-10-05", "startTime": "08:00", "endDate": "2026-10-05", "endTime": "09:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-10-05 16:00 ~ 2026-10-05 17:00", "startDate": "2026-10-05", "startTime": "16:00", "endDate": "2026-10-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-06 09:00 ~ 2026-10-06 17:00", "startDate": "2026-10-06", "startTime": "09:00", "endDate": "2026-10-06", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-10-07 08:00 ~ 2026-10-07 12:00", "startDate": "2026-10-07", "startTime": "08:00", "endDate": "2026-10-07", "endTime": "12:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-10-07 12:00 ~ 2026-10-07 17:00", "startDate": "2026-10-07", "startTime": "12:00", "endDate": "2026-10-07", "endTime": "17:00", "location": "台灣"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-10-08 08:00 ~ 2026-10-08 17:00", "startDate": "2026-10-08", "startTime": "08:00", "endDate": "2026-10-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-10-08 08:00 ~ 2026-10-08 17:00", "startDate": "2026-10-08", "startTime": "08:00", "endDate": "2026-10-08", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-10-08 08:00 ~ 2026-10-12 17:00", "startDate": "2026-10-08", "startTime": "08:00", "endDate": "2026-10-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-12 08:00 ~ 2026-10-12 16:00", "startDate": "2026-10-12", "startTime": "08:00", "endDate": "2026-10-12", "endTime": "16:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-10-12 12:00 ~ 2026-10-12 17:00", "startDate": "2026-10-12", "startTime": "12:00", "endDate": "2026-10-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-10-12 16:00 ~ 2026-10-12 17:00", "startDate": "2026-10-12", "startTime": "16:00", "endDate": "2026-10-12", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-10-13 08:00 ~ 2026-10-13 12:00", "startDate": "2026-10-13", "startTime": "08:00", "endDate": "2026-10-13", "endTime": "12:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-13 08:00 ~ 2026-10-13 17:00", "startDate": "2026-10-13", "startTime": "08:00", "endDate": "2026-10-13", "endTime": "17:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-14 08:00 ~ 2026-10-14 17:00", "startDate": "2026-10-14", "startTime": "08:00", "endDate": "2026-10-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-10-14 08:00 ~ 2026-10-14 12:00", "startDate": "2026-10-14", "startTime": "08:00", "endDate": "2026-10-14", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-10-14 12:00 ~ 2026-10-19 23:59", "startDate": "2026-10-14", "startTime": "12:00", "endDate": "2026-10-19", "endTime": "23:59", "location": "國外"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-10-15 08:00 ~ 2026-10-21 17:00", "startDate": "2026-10-15", "startTime": "08:00", "endDate": "2026-10-21", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-10-15 13:00 ~ 2026-10-15 17:00", "startDate": "2026-10-15", "startTime": "13:00", "endDate": "2026-10-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-10-15 13:00 ~ 2026-10-15 17:00", "startDate": "2026-10-15", "startTime": "13:00", "endDate": "2026-10-15", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-10-16 12:00 ~ 2026-10-16 17:00", "startDate": "2026-10-16", "startTime": "12:00", "endDate": "2026-10-16", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-10-18 08:00 ~ 2026-10-22 17:00", "startDate": "2026-10-18", "startTime": "08:00", "endDate": "2026-10-22", "endTime": "17:00", "location": "國外"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-10-19 12:00 ~ 2026-10-19 17:00", "startDate": "2026-10-19", "startTime": "12:00", "endDate": "2026-10-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-10-19 14:00 ~ 2026-10-19 17:00", "startDate": "2026-10-19", "startTime": "14:00", "endDate": "2026-10-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-10-19 16:00 ~ 2026-10-19 17:00", "startDate": "2026-10-19", "startTime": "16:00", "endDate": "2026-10-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-10-20 00:00 ~ 2026-10-25 23:59", "startDate": "2026-10-20", "startTime": "00:00", "endDate": "2026-10-25", "endTime": "23:59", "location": "國外"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-10-20 08:00 ~ 2026-10-20 17:00", "startDate": "2026-10-20", "startTime": "08:00", "endDate": "2026-10-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-10-20 16:00 ~ 2026-10-20 17:00", "startDate": "2026-10-20", "startTime": "16:00", "endDate": "2026-10-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-10-21 08:00 ~ 2026-10-21 12:00", "startDate": "2026-10-21", "startTime": "08:00", "endDate": "2026-10-21", "endTime": "12:00", "location": "台灣"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-21 08:00 ~ 2026-10-26 17:00", "startDate": "2026-10-21", "startTime": "08:00", "endDate": "2026-10-26", "endTime": "17:00", "location": "台灣"}, {"fullName": "楊德亮(G01092)", "name": "楊德亮", "period": "2026-10-21 11:00 ~ 2026-10-21 17:00", "startDate": "2026-10-21", "startTime": "11:00", "endDate": "2026-10-21", "endTime": "17:00", "location": "台灣"}, {"fullName": "李孟如(G41046)", "name": "李孟如", "period": "2026-10-22 08:00 ~ 2026-10-25 17:00", "startDate": "2026-10-22", "startTime": "08:00", "endDate": "2026-10-25", "endTime": "17:00", "location": "國外"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-10-23 13:00 ~ 2026-10-23 17:00", "startDate": "2026-10-23", "startTime": "13:00", "endDate": "2026-10-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-10-25 08:00 ~ 2026-10-31 17:00", "startDate": "2026-10-25", "startTime": "08:00", "endDate": "2026-10-31", "endTime": "17:00", "location": "國外"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-10-26 00:00 ~ 2026-10-27 12:00", "startDate": "2026-10-26", "startTime": "00:00", "endDate": "2026-10-27", "endTime": "12:00", "location": "國外"}, {"fullName": "高智勇(G06268)", "name": "高智勇", "period": "2026-10-27 08:00 ~ 2026-10-27 17:00", "startDate": "2026-10-27", "startTime": "08:00", "endDate": "2026-10-27", "endTime": "17:00", "location": "台灣"}, {"fullName": "吳愷祐(G05084)", "name": "吳愷祐", "period": "2026-10-27 08:00 ~ 2026-10-30 17:00", "startDate": "2026-10-27", "startTime": "08:00", "endDate": "2026-10-30", "endTime": "17:00", "location": "國外"}, {"fullName": "陳麒年(G41052)", "name": "陳麒年", "period": "2026-10-27 08:00 ~ 2026-10-28 17:00", "startDate": "2026-10-27", "startTime": "08:00", "endDate": "2026-10-28", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-10-27 12:00 ~ 2026-11-01 17:00", "startDate": "2026-10-27", "startTime": "12:00", "endDate": "2026-11-01", "endTime": "17:00", "location": "國外"}, {"fullName": "朱壬杰(G04362)", "name": "朱壬杰", "period": "2026-10-28 08:00 ~ 2026-10-31 17:00", "startDate": "2026-10-28", "startTime": "08:00", "endDate": "2026-10-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-10-28 08:00 ~ 2026-10-28 12:00", "startDate": "2026-10-28", "startTime": "08:00", "endDate": "2026-10-28", "endTime": "12:00", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-10-28 09:00 ~ 2026-10-28 12:00", "startDate": "2026-10-28", "startTime": "09:00", "endDate": "2026-10-28", "endTime": "12:00", "location": "台灣"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-10-29 10:00 ~ 2026-10-29 12:00", "startDate": "2026-10-29", "startTime": "10:00", "endDate": "2026-10-29", "endTime": "12:00", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-10-30 14:00 ~ 2026-10-30 17:00", "startDate": "2026-10-30", "startTime": "14:00", "endDate": "2026-10-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴佳妤(G02462)", "name": "賴佳妤", "period": "2026-11-01 08:00 ~ 2026-11-02 17:00", "startDate": "2026-11-01", "startTime": "08:00", "endDate": "2026-11-02", "endTime": "17:00", "location": "國外"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-11-02 08:00 ~ 2026-11-02 17:00", "startDate": "2026-11-02", "startTime": "08:00", "endDate": "2026-11-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-02 16:00 ~ 2026-11-02 17:00", "startDate": "2026-11-02", "startTime": "16:00", "endDate": "2026-11-02", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-11-04 08:00 ~ 2026-11-04 12:00", "startDate": "2026-11-04", "startTime": "08:00", "endDate": "2026-11-04", "endTime": "12:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-11-05 08:00 ~ 2026-11-06 17:00", "startDate": "2026-11-05", "startTime": "08:00", "endDate": "2026-11-06", "endTime": "17:00", "location": "國外"}, {"fullName": "洪瑋勵(G01871)", "name": "洪瑋勵", "period": "2026-11-05 13:00 ~ 2026-11-05 17:00", "startDate": "2026-11-05", "startTime": "13:00", "endDate": "2026-11-05", "endTime": "17:00", "location": "台灣"}, {"fullName": "賀紹茹(G02351)", "name": "賀紹茹", "period": "2026-11-07 08:00 ~ 2026-11-08 17:00", "startDate": "2026-11-07", "startTime": "08:00", "endDate": "2026-11-08", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-09 16:00 ~ 2026-11-09 17:00", "startDate": "2026-11-09", "startTime": "16:00", "endDate": "2026-11-09", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-11-10 08:00 ~ 2026-11-10 12:00", "startDate": "2026-11-10", "startTime": "08:00", "endDate": "2026-11-10", "endTime": "12:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-11-11 08:00 ~ 2026-11-11 12:00", "startDate": "2026-11-11", "startTime": "08:00", "endDate": "2026-11-11", "endTime": "12:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-13 12:00 ~ 2026-11-15 23:00", "startDate": "2026-11-13", "startTime": "12:00", "endDate": "2026-11-15", "endTime": "23:00", "location": "台灣"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-16 16:00 ~ 2026-11-16 17:00", "startDate": "2026-11-16", "startTime": "16:00", "endDate": "2026-11-16", "endTime": "17:00", "location": "台灣"}, {"fullName": "周安國(G41043)", "name": "周安國", "period": "2026-11-17 09:00 ~ 2026-11-17 16:00", "startDate": "2026-11-17", "startTime": "09:00", "endDate": "2026-11-17", "endTime": "16:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-11-18 08:00 ~ 2026-11-18 12:00", "startDate": "2026-11-18", "startTime": "08:00", "endDate": "2026-11-18", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-11-18 08:00 ~ 2026-11-20 17:00", "startDate": "2026-11-18", "startTime": "08:00", "endDate": "2026-11-20", "endTime": "17:00", "location": "國外"}, {"fullName": "劉思妤(G02819)", "name": "劉思妤", "period": "2026-11-19 08:00 ~ 2026-11-19 17:00", "startDate": "2026-11-19", "startTime": "08:00", "endDate": "2026-11-19", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-11-20 08:00 ~ 2026-11-20 17:00", "startDate": "2026-11-20", "startTime": "08:00", "endDate": "2026-11-20", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-11-21 08:00 ~ 2026-11-22 17:00", "startDate": "2026-11-21", "startTime": "08:00", "endDate": "2026-11-22", "endTime": "17:00", "location": "國外"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-11-23 08:00 ~ 2026-11-23 17:00", "startDate": "2026-11-23", "startTime": "08:00", "endDate": "2026-11-23", "endTime": "17:00", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-23 16:00 ~ 2026-11-23 17:00", "startDate": "2026-11-23", "startTime": "16:00", "endDate": "2026-11-23", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖君樺(G01238)", "name": "廖君樺", "period": "2026-11-25 08:00 ~ 2026-11-25 12:00", "startDate": "2026-11-25", "startTime": "08:00", "endDate": "2026-11-25", "endTime": "12:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-11-28 00:00 ~ 2026-12-03 23:59", "startDate": "2026-11-28", "startTime": "00:00", "endDate": "2026-12-03", "endTime": "23:59", "location": "國外"}, {"fullName": "徐千婷(G00741)", "name": "徐千婷", "period": "2026-11-30 16:00 ~ 2026-11-30 17:00", "startDate": "2026-11-30", "startTime": "16:00", "endDate": "2026-11-30", "endTime": "17:00", "location": "台灣"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-12-04 08:00 ~ 2026-12-04 17:00", "startDate": "2026-12-04", "startTime": "08:00", "endDate": "2026-12-04", "endTime": "17:00", "location": "台灣"}, {"fullName": "賴建亦(G04560)", "name": "賴建亦", "period": "2026-12-12 15:50 ~ 2026-12-20 14:40", "startDate": "2026-12-12", "startTime": "15:50", "endDate": "2026-12-20", "endTime": "14:40", "location": "國外"}, {"fullName": "陳文發(G41050)", "name": "陳文發", "period": "2026-12-14 08:00 ~ 2026-12-18 17:00", "startDate": "2026-12-14", "startTime": "08:00", "endDate": "2026-12-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "張寶玲(G41019)", "name": "張寶玲", "period": "2026-12-14 12:00 ~ 2026-12-14 17:00", "startDate": "2026-12-14", "startTime": "12:00", "endDate": "2026-12-14", "endTime": "17:00", "location": "台灣"}, {"fullName": "傅俊閔(G41041)", "name": "傅俊閔", "period": "2026-12-18 12:00 ~ 2026-12-18 17:00", "startDate": "2026-12-18", "startTime": "12:00", "endDate": "2026-12-18", "endTime": "17:00", "location": "台灣"}, {"fullName": "趙佑晴(G04807)", "name": "趙佑晴", "period": "2026-12-19 08:00 ~ 2026-12-31 17:00", "startDate": "2026-12-19", "startTime": "08:00", "endDate": "2026-12-31", "endTime": "17:00", "location": "國外"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-12-23 08:00 ~ 2026-12-28 17:00", "startDate": "2026-12-23", "startTime": "08:00", "endDate": "2026-12-28", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-12-24 08:00 ~ 2026-12-27 17:00", "startDate": "2026-12-24", "startTime": "08:00", "endDate": "2026-12-27", "endTime": "17:00", "location": "國外"}, {"fullName": "陳心渝(G04965)", "name": "陳心渝", "period": "2026-12-30 08:00 ~ 2026-12-31 17:00", "startDate": "2026-12-30", "startTime": "08:00", "endDate": "2026-12-31", "endTime": "17:00", "location": "台灣"}, {"fullName": "廖霙鳳(G01580)", "name": "廖霙鳳", "period": "2026-12-31 08:00 ~ 2026-12-31 17:00", "startDate": "2026-12-31", "startTime": "08:00", "endDate": "2026-12-31", "endTime": "17:00", "location": "台灣"}];
+
+    function toYMD(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function parseYMD(ymdStr) {
+      const [y, m, d] = ymdStr.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function coversDate(rec, dateStr) {
+      if (!rec.startDate || !rec.endDate) return false;
+      if (dateStr < rec.startDate || dateStr > rec.endDate) return false;
+      if (rec.startDate !== rec.endDate) {
+        const dow = parseYMD(dateStr).getDay();
+        if ((dow === 0 || dow === 6) && dateStr !== rec.startDate && dateStr !== rec.endDate) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function getDayTimeShort(rec, dateStr) {
+      const isStart = rec.startDate === dateStr;
+      const isEnd = rec.endDate === dateStr;
+      if (isStart && isEnd) {
+        if (rec.startTime === '08:00' && rec.endTime === '17:00') return '全天';
+        return `${rec.startTime}~${rec.endTime}`;
+      }
+      if (isStart) return `${rec.startTime}起`;
+      if (isEnd) return `迄${rec.endTime}`;
+      return '全天';
+    }
+
+    // Extract all unique members & months
+    const ALL_MEMBERS = Array.from(new Set(LEAVE_RECORDS.map(r => r.fullName))).sort();
+
+    const availableMonths = new Set();
+    const yearsSet = new Set();
+    LEAVE_RECORDS.forEach(r => {
+      if (r.startDate) yearsSet.add(Number(r.startDate.slice(0, 4)));
+      if (r.endDate) yearsSet.add(Number(r.endDate.slice(0, 4)));
+    });
+    const mainYear = yearsSet.has(2026) ? 2026 : (Array.from(yearsSet)[0] || new Date().getFullYear());
+    for (let m = 1; m <= 12; m++) {
+      availableMonths.add(`${mainYear}-${String(m).padStart(2, '0')}`);
+    }
+    LEAVE_RECORDS.forEach(r => {
+      if (r.startDate) availableMonths.add(r.startDate.slice(0, 7));
+      if (r.endDate) availableMonths.add(r.endDate.slice(0, 7));
+    });
+    const sortedMonths = Array.from(availableMonths).sort();
+
+    const now = new Date();
+    const todayStr = toYMD(now);
+    const defaultDateStr = sortedMonths.includes(todayStr.slice(0, 7))
+      ? todayStr
+      : `${mainYear}-01-01`;
+
+    const state = {
+      mode: 'month', // 'month' | 'week' | 'day'
+      focusDate: defaultDateStr,
+      selectedMembers: new Set(ALL_MEMBERS),
+      memberSearch: ''
+    };
+
+    const monthSelectEl = document.getElementById('monthSelect');
+    const modeSelectEl = document.getElementById('modeSelect');
+    const focusDateInputEl = document.getElementById('focusDateInput');
+    const currentPeriodLabelEl = document.getElementById('currentPeriodLabel');
+    const calendarBoxEl = document.getElementById('calendarBox');
+    const calendarGridEl = document.getElementById('calendarGrid');
+    const detailTitleEl = document.getElementById('detailTitle');
+    const detailCountEl = document.getElementById('detailCount');
+    const detailTableBodyEl = document.getElementById('detailTableBody');
+
+    const msToggleBtn = document.getElementById('msToggleBtn');
+    const msBtnLabel = document.getElementById('msBtnLabel');
+    const msMenu = document.getElementById('msMenu');
+    const msOptionsList = document.getElementById('msOptionsList');
+    const msSearchInput = document.getElementById('msSearchInput');
+
+    function initControls() {
+      // Month dropdown
+      monthSelectEl.innerHTML = '';
+      sortedMonths.forEach(ym => {
+        const [y, m] = ym.split('-');
+        const opt = document.createElement('option');
+        opt.value = ym;
+        opt.textContent = `${y} 年 ${Number(m)} 月`;
+        monthSelectEl.appendChild(opt);
+      });
+
+      renderMemberOptions();
+      updateMultiselectButtonLabel();
+      syncInputsWithState();
+    }
+
+    function renderMemberOptions() {
+      msOptionsList.innerHTML = '';
+      const q = state.memberSearch.trim().toLowerCase();
+      ALL_MEMBERS.forEach(fullName => {
+        if (q && !fullName.toLowerCase().includes(q)) return;
+        const label = document.createElement('label');
+        label.className = 'ms-option';
+        const checked = state.selectedMembers.has(fullName) ? 'checked' : '';
+        label.innerHTML = `
+          <input type="checkbox" value="${fullName}" ${checked}>
+          <span>${fullName}</span>
+        `;
+        label.querySelector('input').addEventListener('change', (e) => {
+          if (e.target.checked) {
+            state.selectedMembers.add(fullName);
+          } else {
+            state.selectedMembers.delete(fullName);
+          }
+          updateMultiselectButtonLabel();
+          render();
+        });
+        msOptionsList.appendChild(label);
+      });
+    }
+
+    function updateMultiselectButtonLabel() {
+      const count = state.selectedMembers.size;
+      if (count === ALL_MEMBERS.length) {
+        msBtnLabel.textContent = `全部同仁 (${ALL_MEMBERS.length})`;
+      } else if (count === 0) {
+        msBtnLabel.textContent = '未選擇同仁 (0)';
+      } else if (count <= 2) {
+        const names = Array.from(state.selectedMembers).map(n => n.split('(')[0]);
+        msBtnLabel.textContent = names.join('、');
+      } else {
+        msBtnLabel.textContent = `已選 ${count} 位同仁`;
+      }
+    }
+
+    function syncInputsWithState() {
+      const ym = state.focusDate.slice(0, 7);
+      if (Array.from(monthSelectEl.options).some(o => o.value === ym)) {
+        monthSelectEl.value = ym;
+      }
+      modeSelectEl.value = state.mode;
+      focusDateInputEl.value = state.focusDate;
+    }
+
+    function getFilteredRecords() {
+      return LEAVE_RECORDS.filter(r => state.selectedMembers.has(r.fullName));
+    }
+
+    function getWeekRange(dateStr) {
+      const d = parseYMD(dateStr);
+      const dow = d.getDay();
+      const start = new Date(d);
+      start.setDate(d.getDate() - dow);
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const cur = new Date(start);
+        cur.setDate(start.getDate() + i);
+        days.push(toYMD(cur));
+      }
+      return days;
+    }
+
+    function render() {
+      syncInputsWithState();
+      const filtered = getFilteredRecords();
+      const focusObj = parseYMD(state.focusDate);
+      const year = focusObj.getFullYear();
+      const month = focusObj.getMonth() + 1;
+
+      if (state.mode === 'month') {
+        currentPeriodLabelEl.textContent = `${year} 年 ${month} 月`;
+        calendarBoxEl.classList.remove('hidden');
+        renderMonthGrid(year, month, filtered);
+        renderDetailTableForDates([state.focusDate], `${state.focusDate} 當日請假同仁資料`, filtered);
+      } else if (state.mode === 'week') {
+        const weekDays = getWeekRange(state.focusDate);
+        currentPeriodLabelEl.textContent = `當周：${weekDays[0]} ～ ${weekDays[6]}`;
+        calendarBoxEl.classList.remove('hidden');
+        renderWeekGrid(weekDays, filtered);
+        renderDetailTableForDates(weekDays, `當周請假同仁資料 (${weekDays[0]} ～ ${weekDays[6]})`, filtered);
+      } else if (state.mode === 'day') {
+        const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+        const wName = weekdays[focusObj.getDay()];
+        currentPeriodLabelEl.textContent = `當日：${state.focusDate} (${wName})`;
+        calendarBoxEl.classList.add('hidden');
+        renderDetailTableForDates([state.focusDate], `${state.focusDate} (${wName}) 當日請假同仁資料`, filtered);
+      }
+    }
+
+    function renderMonthGrid(year, month, filtered) {
+      calendarGridEl.innerHTML = '';
+      const firstDay = new Date(year, month - 1, 1);
+      const startDow = firstDay.getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const prevMonthDays = new Date(year, month - 1, 0).getDate();
+
+      for (let i = startDow - 1; i >= 0; i--) {
+        const d = prevMonthDays - i;
+        const pm = month === 1 ? 12 : month - 1;
+        const py = month === 1 ? year - 1 : year;
+        const dStr = `${py}-${String(pm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        calendarGridEl.appendChild(buildDayCell(dStr, d, true, filtered));
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        calendarGridEl.appendChild(buildDayCell(dStr, d, false, filtered));
+      }
+
+      const total = startDow + daysInMonth;
+      const trailing = (7 - (total % 7)) % 7;
+      for (let d = 1; d <= trailing; d++) {
+        const nm = month === 12 ? 1 : month + 1;
+        const ny = month === 12 ? year + 1 : year;
+        const dStr = `${ny}-${String(nm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        calendarGridEl.appendChild(buildDayCell(dStr, d, true, filtered));
+      }
+    }
+
+    function renderWeekGrid(weekDays, filtered) {
+      calendarGridEl.innerHTML = '';
+      weekDays.forEach(dStr => {
+        const dayNum = Number(dStr.slice(8, 10));
+        const monthNum = Number(dStr.slice(5, 7));
+        calendarGridEl.appendChild(buildDayCell(dStr, `${monthNum}/${dayNum}`, false, filtered));
+      });
+    }
+
+    function buildDayCell(dateStr, labelText, isOtherMonth, filtered) {
+      const cell = document.createElement('div');
+      const dow = parseYMD(dateStr).getDay();
+      const isWeekend = dow === 0 || dow === 6;
+
+      cell.className = 'day-cell' +
+        (isOtherMonth ? ' other-month' : '') +
+        (isWeekend ? ' weekend' : '') +
+        (dateStr === todayStr ? ' today' : '') +
+        (dateStr === state.focusDate ? ' selected-day' : '');
+
+      const dayRecs = filtered.filter(r => coversDate(r, dateStr));
+      const uniquePeople = new Set(dayRecs.map(r => r.fullName)).size;
+
+      const top = document.createElement('div');
+      top.className = 'day-top';
+      top.innerHTML = `
+        <span class="day-number" style="${String(labelText).includes('/') ? 'width:auto;padding:0 6px;border-radius:6px;' : ''}">${labelText}</span>
+        ${uniquePeople > 0 ? `<span class="day-count-badge">${uniquePeople} 人</span>` : ''}
+      `;
+      cell.appendChild(top);
+
+      const list = document.createElement('div');
+      list.className = 'day-records';
+
+      dayRecs.forEach(r => {
+        const item = document.createElement('div');
+        const isAbroad = r.location === '國外';
+        item.className = 'leave-item ' + (isAbroad ? 'loc-abroad' : 'loc-tw');
+        const shortTime = getDayTimeShort(r, dateStr);
+        item.title = `姓名：${r.fullName}\n起訖時間：${r.period}\n地點：${r.location}`;
+        item.innerHTML = `
+          <div class="leave-item-left">
+            <span>${r.name}</span>
+            <span class="leave-item-loc">${r.location}</span>
+          </div>
+          <span class="leave-item-time">${shortTime}</span>
+        `;
+        list.appendChild(item);
+      });
+
+      cell.appendChild(list);
+
+      cell.addEventListener('click', () => {
+        state.focusDate = dateStr;
+        render();
+        document.getElementById('detailSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+
+      return cell;
+    }
+
+    function renderDetailTableForDates(dateList, titleText, filtered) {
+      detailTitleEl.textContent = titleText;
+      detailTableBodyEl.innerHTML = '';
+
+      // Avoid duplicate identical records across a week table while still showing relevant records
+      const seen = new Set();
+      const rowsToRender = [];
+      dateList.forEach(dStr => {
+        const hits = filtered.filter(r => coversDate(r, dStr));
+        hits.forEach(r => {
+          const key = `${r.fullName}|${r.period}|${r.location}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            rowsToRender.push(r);
+          }
+        });
+      });
+
+      const uniquePeople = new Set(rowsToRender.map(r => r.fullName)).size;
+      detailCountEl.textContent = `共 ${uniquePeople} 位同仁 / ${rowsToRender.length} 筆紀錄`;
+
+      if (rowsToRender.length === 0) {
+        detailTableBodyEl.innerHTML = `
+          <tr>
+            <td colspan="3" class="empty-msg">所選期間無符合條件的請假同仁資料</td>
+          </tr>
+        `;
+        return;
+      }
+
+      rowsToRender.forEach(rec => {
+        const tr = document.createElement('tr');
+        const isAbroad = rec.location === '國外';
+        tr.innerHTML = `
+          <td><span class="name-pill">${rec.fullName}</span></td>
+          <td>${rec.period}</td>
+          <td><span class="loc-badge ${isAbroad ? 'abroad' : 'tw'}">${isAbroad ? '✈️ 國外' : '🏠 台灣'}</span></td>
+        `;
+        detailTableBodyEl.appendChild(tr);
+      });
+    }
+
+    // Dropdown & button events
+    monthSelectEl.addEventListener('change', (e) => {
+      state.focusDate = `${e.target.value}-01`;
+      render();
+    });
+
+    modeSelectEl.addEventListener('change', (e) => {
+      state.mode = e.target.value;
+      render();
+    });
+
+    focusDateInputEl.addEventListener('change', (e) => {
+      if (e.target.value) {
+        state.focusDate = e.target.value;
+        render();
+      }
+    });
+
+    document.getElementById('btnToday').addEventListener('click', () => {
+      state.focusDate = todayStr;
+      render();
+    });
+
+    // Multi-select dropdown toggle & actions
+    msToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      msMenu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('memberMultiselect').contains(e.target)) {
+        msMenu.classList.remove('open');
+      }
+    });
+
+    document.getElementById('msSelectAll').addEventListener('click', () => {
+      state.selectedMembers = new Set(ALL_MEMBERS);
+      renderMemberOptions();
+      updateMultiselectButtonLabel();
+      render();
+    });
+
+    document.getElementById('msClearAll').addEventListener('click', () => {
+      state.selectedMembers.clear();
+      renderMemberOptions();
+      updateMultiselectButtonLabel();
+      render();
+    });
+
+    msSearchInput.addEventListener('input', (e) => {
+      state.memberSearch = e.target.value;
+      renderMemberOptions();
+    });
+
+    document.getElementById('btnPrev').addEventListener('click', () => {
+      const d = parseYMD(state.focusDate);
+      if (state.mode === 'month') {
+        d.setMonth(d.getMonth() - 1);
+        d.setDate(1);
+      } else if (state.mode === 'week') {
+        d.setDate(d.getDate() - 7);
+      } else {
+        d.setDate(d.getDate() - 1);
+      }
+      state.focusDate = toYMD(d);
+      render();
+    });
+
+    document.getElementById('btnNext').addEventListener('click', () => {
+      const d = parseYMD(state.focusDate);
+      if (state.mode === 'month') {
+        d.setMonth(d.getMonth() + 1);
+        d.setDate(1);
+      } else if (state.mode === 'week') {
+        d.setDate(d.getDate() + 7);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
+      state.focusDate = toYMD(d);
+      render();
+    });
+
+    initControls();
+    render();
+  </script>
+</body>
+</html>
